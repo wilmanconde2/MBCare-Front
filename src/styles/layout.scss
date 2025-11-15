@@ -1,0 +1,294 @@
+/* ======================================================
+   GENERAL LAYOUT
+====================================================== */
+
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6f8;
+}
+
+/* ======================================================
+   SIDEBAR (Mobile-first)
+====================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: -260px;
+  width: 260px;
+  background: #fff;
+  padding: 1.4rem 1.2rem;
+  transition: left 0.25s ease;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 300;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 250;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu a {
+  padding: 8px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.sidebar-menu a.active {
+  background: #0a5ed7;
+  color: white;
+}
+
+.sidebar-menu a:hover {
+  background: #f0f4ff;
+  color: #0a5ed7;
+}
+
+/* ======================================================
+   TOPBAR
+====================================================== */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 90px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.2rem;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  z-index: 200;
+}
+
+.menu-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.brand-text {
+  font-size: 20px;
+  font-weight: 500;
+  color: #0a5ed7;
+  line-height: 1;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-info {
+  display: none;
+}
+
+/* Button */
+
+.logout-btn {
+  padding: 10px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.logout-btn:hover {
+  background: #f0f4ff;
+  color: #0a5ed7;
+}
+
+/* User circle — versión válida (NO duplicada) */
+.user-circle {
+  border: 1px solid #ccc;
+  background-color: #0a5ed7;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+}
+
+/* ======================================================
+   TOPBAR DESKTOP
+====================================================== */
+
+@media (min-width: 992px) {
+  .topbar-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .topbar-right {
+    display: none;
+  }
+
+  .empresa {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .empresa-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  .user-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+  }
+
+  .user-name {
+    font-size: 13px;
+    font-weight: 500;
+    font-variant: small-caps;
+  }
+
+  .user-org {
+    font-size: 12px;
+    color: #777;
+    border: 1px solid grey;
+    border-radius: 25px;
+    padding: 0.5rem;
+    width: max-content;
+  }
+
+  .brand-text {
+    padding-left: 20rem;
+  }
+}
+
+/* ======================================================
+   MAIN CONTENT
+====================================================== */
+
+.content-wrapper {
+  width: 100%;
+}
+
+.main-content {
+  padding: 100px 1.2rem 1.2rem;
+}
+
+/* ======================================================
+   SIDEBAR DESKTOP FIJO
+====================================================== */
+
+@media (min-width: 992px) {
+  .sidebar.desktop {
+    left: 0 !important;
+    width: 260px;
+  }
+
+  .content-wrapper {
+    margin-left: 260px;
+    border-left: 1px solid #e5e7eb;
+  }
+
+  .menu-btn,
+  .close-btn {
+    display: none;
+  }
+}
+
+/* ======================================================
+   DASHBOARD
+====================================================== */
+
+.dashboard-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0.8rem 0.5rem;
+}
+
+.dash-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.dash-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 576px) {
+  .dash-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .dash-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.dash-card {
+  background: #fff;
+  padding: 1.1rem 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-card h3 {
+  font-size: 15px;
+}
+
+.value {
+  font-size: 24px;
+  font-weight: 700;
+}
