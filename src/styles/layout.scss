@@ -119,8 +119,6 @@
   display: none;
 }
 
-/* Button */
-
 .logout-btn {
   padding: 10px 14px;
   font-size: 13px;
@@ -138,7 +136,7 @@
   color: #0a5ed7;
 }
 
-/* User circle — versión válida (NO duplicada) */
+/* Avatar */
 .user-circle {
   border: 1px solid #ccc;
   background-color: #0a5ed7;
@@ -172,18 +170,10 @@
     font-weight: 500;
   }
 
-  .empresa-logo {
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    object-fit: cover;
-  }
-
   .user-data {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
     line-height: 1.1;
   }
 
@@ -198,12 +188,8 @@
     color: #777;
     border: 1px solid grey;
     border-radius: 25px;
-    padding: 0.5rem;
+    padding: 0.35rem 0.7rem;
     width: max-content;
-  }
-
-  .brand-text {
-    padding-left: 20rem;
   }
 }
 
@@ -232,6 +218,8 @@
   .content-wrapper {
     margin-left: 260px;
     border-left: 1px solid #e5e7eb;
+    position: relative;
+    z-index: 100;
   }
 
   .menu-btn,

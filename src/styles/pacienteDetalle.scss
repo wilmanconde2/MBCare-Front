@@ -1,0 +1,112 @@
+/* ======================================================
+   DETALLE PACIENTE — Mobile First
+====================================================== */
+
+.paciente-detalle-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f6f8;
+  padding-top: 20px;
+}
+
+.detalle-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------------- HEADER ---------------- */
+
+.detalle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+  }
+}
+
+.close-x {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ---------------- GRID ---------------- */
+
+.detalle-grid {
+  display: grid;
+  gap: 1.4rem;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  p {
+    font-size: 15px;
+    color: #222;
+    margin: 0;
+    padding: 8px 10px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .col-2 {
+    grid-column: span 1;
+  }
+}
+
+/* Desktop grid */
+@media (min-width: 768px) {
+  .detalle-grid {
+    grid-template-columns: repeat(2, 1fr);
+
+    .col-2 {
+      grid-column: span 2;
+    }
+  }
+}
+
+/* Observaciones caja grande */
+.detalle-observaciones {
+  min-height: 90px;
+  align-items: flex-start;
+  padding-top: 12px !important;
+}
+
+/* ---------------- ACCIONES ---------------- */
+
+.detalle-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-editar {
+  background: #0a5ed7;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #084eb3;
+  }
+}

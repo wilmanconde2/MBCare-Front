@@ -4,7 +4,10 @@ import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 
 import Dashboard from '../pages/dashboard/Dashboard';
-// import Pacientes from '../pages/pacientes/Pacientes';
+import Pacientes from '../pages/pacientes/Pacientes';
+import PacienteEditar from '../pages/pacientes/PacienteEditar';
+import PacienteDetalle from '../pages/pacientes/PacienteDetalle';
+
 // import Agenda from '../pages/agenda/Agenda';
 // import NotasClinicas from '../pages/notas/NotasClinicas';
 // import Contabilidad from '../pages/contabilidad/Contabilidad';
@@ -23,7 +26,7 @@ export default function AppRouter() {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
 
-        {/* --- APP INTERNA --- */}
+        {/* --- APP INTERNA PROTEGIDA --- */}
         <Route
           path='/app'
           element={
@@ -33,16 +36,19 @@ export default function AppRouter() {
           }
         >
           <Route index element={<Dashboard />} />
-{/* 
           <Route path='pacientes' element={<Pacientes />} />
-          <Route path='agenda' element={<Agenda />} />
-          <Route path='notas' element={<NotasClinicas />} />
-          <Route path='contabilidad' element={<Contabilidad />} />
-          <Route path='administracion' element={<Administracion />} />
-          <Route path='configuracion' element={<Configuracion />} /> */}
+          <Route path='pacientes/:id' element={<PacienteDetalle />} />
+          <Route path='pacientes/:id/editar' element={<PacienteEditar />} />
+
+          {/* Rutas futuras */}
+          {/* <Route path="agenda" element={<Agenda />} /> */}
+          {/* <Route path="notas" element={<NotasClinicas />} /> */}
+          {/* <Route path="contabilidad" element={<Contabilidad />} /> */}
+          {/* <Route path="administracion" element={<Administracion />} /> */}
+          {/* <Route path="configuracion" element={<Configuracion />} /> */}
         </Route>
 
-        {/* 404 */}
+        {/* --- 404 REDIRECT --- */}
         <Route path='*' element={<Navigate to='/login' />} />
       </Routes>
     </BrowserRouter>

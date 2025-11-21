@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserStore } from '../../store/userStore';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
-  const login = useUserStore((state) => state.login);
-  const isLoading = useUserStore((state) => state.loading);
   const navigate = useNavigate();
+  const { login, loading } = useAuth();
 
   const [data, setData] = useState({
     email: '',
@@ -39,6 +38,7 @@ export default function Login() {
             type='email'
             className='form-control'
             placeholder='Email'
+            value={data.email}
             onChange={handleChange}
           />
         </div>
@@ -50,12 +50,13 @@ export default function Login() {
             type='password'
             className='form-control'
             placeholder='Contraseña (mínimo 8 caracteres)'
+            value={data.password}
             onChange={handleChange}
           />
         </div>
 
-        <button className='btn btn-primary w-100' onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? 'Cargando...' : 'Sign In'}
+        <button className='btn btn-primary w-100' onClick={handleSubmit} disabled={loading}>
+          {loading ? 'Cargando...' : 'Sign In'}
         </button>
 
         <Link to='/register' className='text-decoration-none'>

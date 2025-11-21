@@ -1,0 +1,120 @@
+/* ============================
+   PAGINA PACIENTES
+============================ */
+
+.pacientes-page {
+  padding-top: 1rem;
+}
+
+/* Título */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+/* Botón superior */
+.top-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+.btn-new {
+  background: #0a5ed7;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.btn-new i {
+  font-size: 16px;
+}
+
+/* Card */
+.pacientes-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.3rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Tabla */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.pacientes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.pacientes-table thead {
+  border-bottom: 1px solid #ddd;
+}
+
+.pacientes-table th {
+  text-align: left;
+  padding: 8px 4px;
+  color: #444;
+  font-weight: 600;
+}
+
+.pacientes-table td {
+  padding: 10px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.edit {
+  color: #0a5ed7;
+  cursor: pointer;
+}
+
+.delete {
+  color: #d9534f;
+  cursor: pointer;
+}
+
+/* MOBILE — ocultar columnas */
+.hide-mobile {
+  display: none;
+}
+
+/* DESKTOP */
+@media (min-width: 992px) {
+  .page-title {
+    font-size: 30px;
+  }
+
+  .hide-mobile {
+    display: table-cell;
+  }
+
+  .pacientes-card {
+    padding: 2rem;
+  }
+
+  .pacientes-table th,
+  .pacientes-table td {
+    padding: 14px 8px;
+  }
+}

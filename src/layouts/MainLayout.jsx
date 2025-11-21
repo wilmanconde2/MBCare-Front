@@ -1,109 +1,115 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function MainLayout() {
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 992);
 
-  // TEMPORAL (después se traerá de AuthContext)
-  const empresa = "Mind & Body";
-  const logoEmpresa = "/logo.png";
-  const inicial = "W";
-  const nombre = "wilman conde";
-  const organizacion = "Psicología";
+  const { user, org, loading, logout } = useAuth();
 
+  // Manejo de resize
   useEffect(() => {
-    const handleResize = () => {
+    const onResize = () => {
       setIsDesktop(window.innerWidth >= 992);
-      if (window.innerWidth >= 992) setOpen(false); // evita overlay residual
+      if (window.innerWidth >= 992) setOpen(false);
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  return (
-    <div className="layout-wrapper">
+  if (loading) return null;
 
-      {/* ======================= TOPBAR FIJO ======================= */}
-      <header className="topbar">
-        {/* Mobile: hamburguesa */}
+  const inicial = user?.nombre?.charAt(0)?.toUpperCase();
+
+  return (
+    <div className='layout-wrapper'>
+      {/* ================= TOPBAR ================= */}
+      <header className='topbar'>
         {!isDesktop && (
-          <button className="menu-btn" onClick={() => setOpen(true)}>
-            <i className="bi bi-list" />
+          <button className='menu-btn' onClick={() => setOpen(true)}>
+            <i className='bi bi-list' />
           </button>
         )}
 
-        {/* Brand */}
-        <h2 className="brand-text">
+        <h2 className='brand-text'>
           M&B <span>Care</span>
         </h2>
 
-        {/* ---- DERECHA DEL TOPBAR ---- */}
         {isDesktop ? (
-          <div className="topbar-info">
-            <span className="empresa">{empresa}</span>
-            <img src={logoEmpresa} alt="logo" className="empresa-logo" />
+          <div className='topbar-info'>
+            {/* Nombre de la empresa */}
+            <span className='empresa'>{org?.nombre}</span>
 
-            <div className="user-circle">{inicial}</div>
+            {/* Avatar */}
+            <div className='user-circle'>{inicial}</div>
 
-            <div className="user-data">
-              <span className="user-name">{nombre}</span>
-              <span className="user-org">{organizacion}</span>
+            {/* Nombre + industria */}
+            <div className='user-data'>
+              <span className='user-name'>{user?.nombre}</span>
+              <span className='user-org'>{org?.industria}</span>
             </div>
 
-            <button className="logout-btn">Cerrar Sesión</button>
+            <button className='logout-btn' onClick={logout}>
+              Cerrar Sesión
+            </button>
           </div>
         ) : (
-          <div className="topbar-right">
-            <div className="user-circle">{inicial}</div>
-            <button className="logout-btn">Cerrar Sesión</button>
+          <div className='topbar-right'>
+            <div className='user-circle'>{inicial}</div>
+            <button className='logout-btn' onClick={logout}>
+              Cerrar Sesión
+            </button>
           </div>
         )}
       </header>
 
-      {/* ======================= SIDEBAR ======================= */}
-      <aside className={`sidebar ${open ? "open" : ""} ${isDesktop ? "desktop" : ""}`}>
-        <div className="sidebar-header">
+      {/* ================= SIDEBAR ================= */}
+      <aside className={`sidebar ${open ? 'open' : ''} ${isDesktop ? 'desktop' : ''}`}>
+        <div className='sidebar-header'>
           {!isDesktop && (
-            <button className="close-btn" onClick={() => setOpen(false)}>
-              <i className="bi bi-x-lg" />
+            <button className='close-btn' onClick={() => setOpen(false)}>
+              <i className='bi bi-x-lg' />
             </button>
           )}
         </div>
 
-        <nav className="sidebar-menu">
-          <NavLink to="/app" end>
-            <i className="bi bi-bell" /> Dashboard
+        <nav className='sidebar-menu'>
+          <NavLink to='/app' end>
+            <i className='bi bi-bell' /> Dashboard
           </NavLink>
-          <NavLink to="/app/pacientes">
-            <i className="bi bi-people" /> Pacientes
+
+          <NavLink to='/app/pacientes'>
+            <i className='bi bi-people' /> Pacientes
           </NavLink>
-          <NavLink to="/app/agenda">
-            <i className="bi bi-calendar-event" /> Agenda
+
+          <NavLink to='/app/agenda'>
+            <i className='bi bi-calendar-event' /> Agenda
           </NavLink>
-          <NavLink to="/app/notas">
-            <i className="bi bi-file-text" /> Notas Clínicas
+
+          <NavLink to='/app/notas'>
+            <i className='bi bi-file-text' /> Notas Clínicas
           </NavLink>
-          <NavLink to="/app/contabilidad">
-            <i className="bi bi-cash-coin" /> Contabilidad
+
+          <NavLink to='/app/contabilidad'>
+            <i className='bi bi-cash-coin' /> Contabilidad
           </NavLink>
-          <NavLink to="/app/administracion">
-            <i className="bi bi-person-gear" /> Administración
+
+          <NavLink to='/app/administracion'>
+            <i className='bi bi-person-gear' /> Administración
           </NavLink>
-          <NavLink to="/app/configuracion">
-            <i className="bi bi-gear" /> Configuración
+
+          <NavLink to='/app/configuracion'>
+            <i className='bi bi-gear' /> Configuración
           </NavLink>
         </nav>
       </aside>
 
-      {/* Overlay solo mobile */}
-      {!isDesktop && open && (
-        <div className="sidebar-overlay" onClick={() => setOpen(false)} />
-      )}
+      {!isDesktop && open && <div className='sidebar-overlay' onClick={() => setOpen(false)} />}
 
-      {/* ======================= CONTENIDO ======================= */}
-      <div className="content-wrapper">
-        <main className="main-content">
+      {/* ================= CONTENIDO ================= */}
+      <div className='content-wrapper'>
+        <main className='main-content'>
           <Outlet />
         </main>
       </div>
