@@ -10,6 +10,7 @@ export default function PacienteEditar() {
 
   const [form, setForm] = useState({
     nombreCompleto: '',
+    tipoDocumento: 'CC',
     numeroDocumento: '',
     fechaNacimiento: '',
     genero: '',
@@ -32,6 +33,7 @@ export default function PacienteEditar() {
 
         setForm({
           nombreCompleto: p.nombreCompleto || '',
+          tipoDocumento: p.tipoDocumento || 'CC',
           numeroDocumento: p.numeroDocumento || '',
           fechaNacimiento: p.fechaNacimiento?.substring(0, 10) || '',
           genero: p.genero || '',
@@ -101,6 +103,17 @@ export default function PacienteEditar() {
           </div>
 
           <div>
+            <label>Tipo Documento *</label>
+            <select name='tipoDocumento' value={form.tipoDocumento} onChange={handleChange}>
+              <option value='CC'>CC</option>
+              <option value='TI'>TI</option>
+              <option value='CE'>CE</option>
+              <option value='Pasaporte'>Pasaporte</option>
+              <option value='Otro'>Otro</option>
+            </select>
+          </div>
+
+          <div>
             <label>Número de Documento *</label>
             <input
               type='text'
@@ -123,7 +136,12 @@ export default function PacienteEditar() {
 
           <div>
             <label>Género</label>
-            <input type='text' name='genero' value={form.genero} onChange={handleChange} />
+            <select name='genero' value={form.genero} onChange={handleChange}>
+              <option value=''>Seleccione</option>
+              <option value='Masculino'>Masculino</option>
+              <option value='Femenino'>Femenino</option>
+              <option value='Otro'>Otro</option>
+            </select>
           </div>
 
           <div>
@@ -161,7 +179,7 @@ export default function PacienteEditar() {
             />
           </div>
 
-          <div className='col-2'>
+          <div className='full'>
             <label>Observaciones</label>
             <textarea
               name='observaciones'

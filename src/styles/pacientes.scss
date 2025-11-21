@@ -3,7 +3,7 @@
 ============================ */
 
 .pacientes-page {
-  padding-top: 1rem;
+  padding: 1rem;
 }
 
 /* Título */
@@ -43,7 +43,7 @@
   background: #fff;
   border-radius: 16px;
   padding: 1.3rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .card-title {
@@ -101,6 +101,9 @@
 
 /* DESKTOP */
 @media (min-width: 992px) {
+  .pacientes-page {
+    padding: 1rem 3rem;
+  }
   .page-title {
     font-size: 30px;
   }
@@ -117,4 +120,32 @@
   .pacientes-table td {
     padding: 14px 8px;
   }
+}
+
+.confirm-modal {
+  background: white;
+  padding: 1.6rem;
+  border-radius: 14px;
+  max-width: 360px;
+  margin: auto;
+  text-align: center;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.4rem;
+}
+
+.btn-delete {
+  background: #d62828;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: #b81f1f;
 }

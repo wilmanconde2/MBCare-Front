@@ -36,16 +36,24 @@
   gap: 1rem;
 }
 
-.form-grid textarea[name='observaciones'] {
+.form-grid textarea{
+  width: 100%;
   min-height: 130px;
   resize: vertical;
+  border-radius: 16px;
 }
 
 /* ===== DESKTOP ===== */
+@media (min-width: 576px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 @media (min-width: 768px) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
 }
 
 /* ===== BOTONES ===== */

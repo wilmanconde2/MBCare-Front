@@ -24,25 +24,32 @@ export function AuthProvider({ children }) {
           email: profile.email,
           rol: profile.rol,
         });
+
+        if (profile.organizacion) {
+          setOrg({
+            id: profile.organizacion._id,
+            nombre: profile.organizacion.nombre,
+            industria: profile.organizacion.industria,
+          });
+        }
       } catch {
         setUser(null);
+        setOrg(null);
       }
+
       setLoading(false);
     }
 
     loadUser();
   }, []);
 
+
   /* =====================================================
       2. LOGIN
   ===================================================== */
   async function login(data) {
     try {
-      const res = await loginRequest(data); // POST /auth/login
-
-      if (!res.data?.user) return { ok: false, message: 'Respuesta inválida' };
-
-      // guardar user
+      const res = await loginRequest(data);
       const profile = res.data.user;
 
       setUser({
@@ -52,6 +59,14 @@ export function AuthProvider({ children }) {
         rol: profile.rol,
       });
 
+      if (profile.organizacion) {
+        setOrg({
+          id: profile.organizacion._id || profile.organizacion,
+          nombre: profile.organizacion.nombre,
+          industria: profile.organizacion.industria,
+        });
+      }
+
       return { ok: true };
     } catch (error) {
       return {
@@ -60,6 +75,7 @@ export function AuthProvider({ children }) {
       };
     }
   }
+
 
   /* =====================================================
       3. REGISTER (si lo usas)

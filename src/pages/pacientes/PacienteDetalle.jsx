@@ -85,7 +85,7 @@ export default function PacienteDetalle() {
             <p>{paciente.telefonoEmergencia || '-'}</p>
           </div>
 
-          <div className='col-2'>
+          <div className='full'>
             <label>Observaciones</label>
             <p className='detalle-observaciones'>{paciente.observaciones || '-'}</p>
           </div>
