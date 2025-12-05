@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { getPacientes, deletePaciente } from '../../api/pacientes';
 import { useNavigate } from 'react-router-dom';
 import NuevoPacienteModal from './NuevoPacienteModal';
+import '../../styles/pacientes.scss';
 
 export default function Pacientes() {
   const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-
   const [confirmId, setConfirmId] = useState(null);
 
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ export default function Pacientes() {
     try {
       const res = await getPacientes();
       setPacientes(res.data);
-    } catch {
-      console.error('Error al cargar pacientes');
+    } catch (error) {
+      console.error('Error al cargar pacientes', error);
     } finally {
       setLoading(false);
     }
@@ -42,18 +42,19 @@ export default function Pacientes() {
 
   return (
     <div className='pacientes-page'>
-      <h2 className='page-title'>Pacientes</h2>
+      {/* Encabezado */}
+      <div className='d-flex justify-content-between align-items-center mb-3'>
+        <h2 className='page-title'>Pacientes</h2>
 
-      <div className='top-actions'>
-        <button className='btn-new' onClick={() => setShowModal(true)}>
-          <i className='bi bi-plus-lg'></i>
-          Nuevo Paciente
+        <button className='btn-nueva-cita' onClick={() => setShowModal(true)}>
+          <i className='bi bi-plus-circle'></i> Nuevo Paciente
         </button>
       </div>
 
+      {/* Modal Crear */}
       {showModal && <NuevoPacienteModal close={() => setShowModal(false)} reload={loadPacientes} />}
 
-      {/* MODAL CONFIRMAR ELIMINAR */}
+      {/* Modal Confirmar Eliminar */}
       {confirmId && (
         <div className='modal-overlay'>
           <div className='confirm-modal'>
@@ -73,6 +74,7 @@ export default function Pacientes() {
         </div>
       )}
 
+      {/* TABLA estilo AGENDA */}
       <div className='pacientes-card'>
         <h3 className='card-title'>Lista de Pacientes</h3>
 
@@ -82,9 +84,10 @@ export default function Pacientes() {
               <tr>
                 <th>Nombre</th>
                 <th className='hide-mobile'>Documento</th>
-                <th>Teléfono</th>
+                {/* Teléfono oculto en mobile */}
+                <th className='hide-mobile'>Teléfono</th>
                 <th className='hide-mobile'>Email</th>
-                <th>Acciones</th>
+                <th className='acciones-header'>Acciones</th>
               </tr>
             </thead>
 
@@ -92,22 +95,29 @@ export default function Pacientes() {
               {pacientes.map((p) => (
                 <tr key={p._id}>
                   <td>{p.nombreCompleto}</td>
+
                   <td className='hide-mobile'>{p.numeroDocumento}</td>
-                  <td>{p.telefono || '-'}</td>
+
+                  {/* Teléfono también con hide-mobile */}
+                  <td className='hide-mobile'>{p.telefono || '-'}</td>
+
                   <td className='hide-mobile'>{p.email || '-'}</td>
 
                   <td className='actions'>
                     <i
-                      className='bi bi-eye view'
+                      className='bi bi-eye text-primary'
                       onClick={() => navigate(`/app/pacientes/${p._id}`)}
                     ></i>
 
                     <i
-                      className='bi bi-pencil edit'
+                      className='bi bi-pencil-square text-primary ms-3'
                       onClick={() => navigate(`/app/pacientes/${p._id}/editar`)}
                     ></i>
 
-                    <i className='bi bi-trash delete' onClick={() => setConfirmId(p._id)}></i>
+                    <i
+                      className='bi bi-x-circle text-danger ms-3'
+                      onClick={() => setConfirmId(p._id)}
+                    ></i>
                   </td>
                 </tr>
               ))}

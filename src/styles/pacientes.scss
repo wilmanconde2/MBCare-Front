@@ -1,151 +1,232 @@
+/* ===========================
+   PACIENTES — MOBILE FIRST
+=========================== */
+.pacientes-page {
+  padding: 1.2rem;
+
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .btn-nueva-cita {
+    background: #0d6efd;
+    color: white;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+
+    i {
+      font-size: 1rem;
+    }
+  }
+
+  /* CARD */
+  .pacientes-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  /* WRAPPER TABLA */
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+
+  /* TABLA ESTILO AGENDA */
+  .pacientes-table {
+    width: 100%;
+    min-width: 520px; /* menos scroll horizontal, ya solo hay 2 columnas en mobile */
+    border-collapse: separate !important;
+    border-spacing: 0 10px;
+
+    thead th {
+      border-bottom: none !important;
+      color: #5f5f5f;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding-bottom: 0.7rem;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    tbody td {
+      padding: 0.85rem 0.8rem;
+      font-size: 0.9rem;
+      background: #fff;
+      border: none !important;
+      white-space: nowrap;
+    }
+
+    tbody tr td:first-child {
+      border-radius: 10px 0 0 10px;
+    }
+
+    tbody tr td:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+
+    /* Alineación del header Acciones con los iconos */
+    .acciones-header {
+      text-align: center;
+    }
+
+    /* ICONOS alineados horizontal y verticalmente */
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: 0.2s ease;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* TABLET */
+@media (min-width: 768px) {
+  .pacientes-page {
+    padding: 2rem;
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .pacientes-card {
+      padding: 2rem;
+    }
+  }
+}
+
+/* DESKTOP */
+@media (min-width: 1024px) {
+  .pacientes-page {
+    padding: 2.5rem 3rem;
+
+    .page-title {
+      font-size: 2.1rem;
+    }
+
+    .hide-mobile {
+      display: table-cell;
+    }
+  }
+}
+
+
 /* ============================
-   PAGINA PACIENTES
+   BOTONES GENERALES
 ============================ */
 
-.pacientes-page {
-  padding: 1rem;
-}
-
-/* Título */
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 1.2rem;
-}
-
-/* Botón superior */
-.top-actions {
+.modal-buttons {
+  margin-top: 1.5rem;
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 1.2rem;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
-.btn-new {
+.btn-cancel {
+  background: #eee;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-create {
   background: #0a5ed7;
   color: white;
   padding: 10px 16px;
   border-radius: 10px;
   border: none;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
   cursor: pointer;
 }
 
-.btn-new i {
-  font-size: 16px;
+/* ============================
+   MODAL CONFIRMAR ELIMINAR
+============================ */
+
+.confirm-modal {
+  background: #ffffff;
+  width: 90%;
+  max-width: 380px;
+  padding: 1.6rem 1.8rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  text-align: center;
 }
 
-/* Card */
-.pacientes-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.3rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.card-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-/* Tabla */
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.pacientes-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.pacientes-table thead {
-  border-bottom: 1px solid #ddd;
-}
-
-.pacientes-table th {
-  text-align: left;
-  padding: 8px 4px;
-  color: #444;
+.confirm-modal h3 {
+  margin-bottom: 0.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
 }
 
-.pacientes-table td {
-  padding: 10px 4px;
-  border-bottom: 1px solid #eee;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
-.edit {
-  color: #0a5ed7;
-  cursor: pointer;
-}
-
-.delete {
-  color: #d9534f;
-  cursor: pointer;
-}
-
-/* MOBILE — ocultar columnas */
-.hide-mobile {
-  display: none;
-}
-
-/* DESKTOP */
-@media (min-width: 992px) {
-  .pacientes-page {
-    padding: 1rem 3rem;
-  }
-  .page-title {
-    font-size: 30px;
-  }
-
-  .hide-mobile {
-    display: table-cell;
-  }
-
-  .pacientes-card {
-    padding: 2rem;
-  }
-
-  .pacientes-table th,
-  .pacientes-table td {
-    padding: 14px 8px;
-  }
-}
-
-.confirm-modal {
-  background: white;
-  padding: 1.6rem;
-  border-radius: 14px;
-  max-width: 360px;
-  margin: auto;
-  text-align: center;
+.confirm-modal p {
+  margin: 0 0 1.3rem;
+  font-size: 0.95rem;
+  color: #555;
 }
 
 .confirm-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.4rem;
+  gap: 0.75rem;
 }
 
+.confirm-buttons .btn-cancel,
+.confirm-buttons .btn-delete {
+  flex: 1;
+}
+
+/* botón rojo ELIMINAR */
 .btn-delete {
-  background: #d62828;
-  color: white;
+  background: #dc3545;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
   cursor: pointer;
 }
 
 .btn-delete:hover {
-  background: #b81f1f;
+  background: #c82333;
 }
+
+
+
+
+

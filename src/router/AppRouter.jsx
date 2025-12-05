@@ -7,8 +7,8 @@ import Dashboard from '../pages/dashboard/Dashboard';
 import Pacientes from '../pages/pacientes/Pacientes';
 import PacienteEditar from '../pages/pacientes/PacienteEditar';
 import PacienteDetalle from '../pages/pacientes/PacienteDetalle';
+import Agenda from '../pages/agenda/Agenda';
 
-// import Agenda from '../pages/agenda/Agenda';
 // import NotasClinicas from '../pages/notas/NotasClinicas';
 // import Contabilidad from '../pages/contabilidad/Contabilidad';
 // import Administracion from '../pages/admin/Administracion';
@@ -39,9 +39,9 @@ export default function AppRouter() {
           <Route path='pacientes' element={<Pacientes />} />
           <Route path='pacientes/:id' element={<PacienteDetalle />} />
           <Route path='pacientes/:id/editar' element={<PacienteEditar />} />
+          <Route path="agenda" element={<Agenda />} />
 
           {/* Rutas futuras */}
-          {/* <Route path="agenda" element={<Agenda />} /> */}
           {/* <Route path="notas" element={<NotasClinicas />} /> */}
           {/* <Route path="contabilidad" element={<Contabilidad />} /> */}
           {/* <Route path="administracion" element={<Administracion />} /> */}
