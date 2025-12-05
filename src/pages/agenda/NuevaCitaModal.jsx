@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { crearCita } from '../../api/citas';
-import { getPacientes  } from '../../api/pacientes';
+import { getPacientes } from '../../api/pacientes';
 import axios from '../../api/axios';
 import '../../styles/nuevaCitaModal.scss';
 
@@ -19,31 +19,40 @@ const NuevaCitaModal = ({ show, onHide, onSuccess }) => {
     notas: '',
   });
 
-  // Cargar pacientes y profesionales
   useEffect(() => {
     const cargarData = async () => {
-      const pacs = await getPacientes ();
-      setPacientes(pacs);
+      try {
+        // 🔹 Pacientes
+        const resPac = await getPacientes(); // axios response
+        setPacientes(resPac.data || []); // aquí sí es el array
 
-      const { data } = await axios.get('/usuarios?rol=Profesional');
-      setProfesionales(data.usuarios || []);
+        // 🔹 Profesionales
+        const { data } = await axios.get('/usuarios'); // sin filtro de rol
+        const todos = data.usuarios || [];
+        setProfesionales(todos.filter((u) => u.rol === 'Profesional' || u.rol === 'Fundador'));
 
-      const userData = localStorage.getItem('authUser');
-      if (userData) {
-        const user = JSON.parse(userData);
-        setRolUsuario(user?.rol);
+        // 🔹 Usuario autenticado
+        const userData = localStorage.getItem('authUser');
+        if (userData) {
+          const user = JSON.parse(userData);
+          setRolUsuario(user?.rol);
 
-        if (user?.rol === 'Profesional') {
-          setFormData((prev) => ({
-            ...prev,
-            profesional: user.id,
-          }));
+          if (user?.rol === 'Profesional') {
+            setFormData((prev) => ({
+              ...prev,
+              profesional: user.id, // o user._id según tu backend
+            }));
+          }
         }
+      } catch (e) {
+        console.error('Error cargando datos para nueva cita', e);
       }
     };
 
-    cargarData();
-  }, []);
+    if (show) {
+      cargarData();
+    }
+  }, [show]);
 
   const handleChange = (e) => {
     setFormData({
@@ -79,14 +88,14 @@ const NuevaCitaModal = ({ show, onHide, onSuccess }) => {
             </Form.Select>
           </Form.Group>
 
-          {/* Profesional: solo visible si NO es Profesional */}
+          {/* Profesional */}
           {rolUsuario !== 'Profesional' && (
             <Form.Group className='mb-3'>
               <Form.Label>Profesional</Form.Label>
               <Form.Select name='profesional' value={formData.profesional} onChange={handleChange}>
                 <option value=''>Seleccione un profesional</option>
                 {profesionales.map((pro) => (
-                  <option key={pro.id} value={pro.id}>
+                  <option key={pro._id} value={pro._id}>
                     {pro.nombre} ({pro.email})
                   </option>
                 ))}

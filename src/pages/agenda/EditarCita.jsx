@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { actualizarCita } from '../../api/citas';
-import { getPacientes  } from '../../api/pacientes';
+import { getPacientes } from '../../api/pacientes';
 import axios from '../../api/axios';
 import '../../styles/editarCita.scss';
 
@@ -20,6 +20,7 @@ const EditarCita = ({ show, onHide, cita, onSuccess }) => {
     estado: 'Programada',
   });
 
+  // Cargar datos iniciales de la cita
   useEffect(() => {
     if (cita) {
       setFormData({
@@ -34,23 +35,31 @@ const EditarCita = ({ show, onHide, cita, onSuccess }) => {
     }
   }, [cita]);
 
+  // Cargar pacientes, profesionales y rol
   useEffect(() => {
     const cargarData = async () => {
-      const pacs = await getPacientes ();
-      setPacientes(pacs);
+      try {
+        const resPac = await getPacientes();
+        setPacientes(resPac.data || []);
 
-      const { data } = await axios.get('/usuarios?rol=Profesional');
-      setProfesionales(data.usuarios || []);
+        const { data } = await axios.get('/usuarios');
+        const todos = data.usuarios || [];
+        setProfesionales(todos.filter((u) => u.rol === 'Profesional' || u.rol === 'Fundador'));
 
-      const userData = localStorage.getItem('authUser');
-      if (userData) {
-        const user = JSON.parse(userData);
-        setRolUsuario(user?.rol);
+        const userData = localStorage.getItem('authUser');
+        if (userData) {
+          const user = JSON.parse(userData);
+          setRolUsuario(user?.rol);
+        }
+      } catch (e) {
+        console.error('Error cargando datos para editar cita', e);
       }
     };
 
-    cargarData();
-  }, []);
+    if (show) {
+      cargarData();
+    }
+  }, [show]);
 
   const handleChange = (e) => {
     setFormData({
@@ -86,14 +95,14 @@ const EditarCita = ({ show, onHide, cita, onSuccess }) => {
             </Form.Select>
           </Form.Group>
 
-          {/* Profesional visible solo si NO es profesional */}
+          {/* Profesional */}
           {rolUsuario !== 'Profesional' && (
             <Form.Group className='mb-3'>
               <Form.Label>Profesional</Form.Label>
               <Form.Select name='profesional' value={formData.profesional} onChange={handleChange}>
                 <option value=''>Seleccione un profesional</option>
                 {profesionales.map((pro) => (
-                  <option key={pro.id} value={pro.id}>
+                  <option key={pro._id} value={pro._id}>
                     {pro.nombre} ({pro.email})
                   </option>
                 ))}
