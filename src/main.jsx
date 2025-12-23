@@ -13,6 +13,7 @@ import './styles/pacientes.scss';
 import './styles/nuevoPacienteModal.scss';
 import './styles/pacienteEditar.scss';
 import './styles/pacienteDetalle.scss';
+import './styles/contabilidad.scss';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

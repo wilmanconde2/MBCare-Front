@@ -1,0 +1,417 @@
+/* ============================
+   CONTABILIDAD — MOBILE FIRST
+============================ */
+
+.contabilidad-page {
+  padding: 1.2rem;
+
+  .page-title,
+  .contab-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    color: #111827;
+  }
+
+  .contab-subtitle {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ====== CARDS RESUMEN SUPERIOR ====== */
+  .contab-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    padding: 1.1rem 1.2rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 0.2rem;
+    }
+
+    .amount {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.1rem;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .icon-box {
+      font-size: 1.3rem;
+      color: #6b7280;
+    }
+
+    &.apertura .amount {
+      color: #111827;
+    }
+
+    &.ingresos .amount {
+      color: #16a34a;
+    }
+
+    &.egresos .amount {
+      color: #dc2626;
+    }
+
+    &.balance .amount {
+      color: #111827;
+    }
+  }
+
+  /* ====== TABS ====== */
+  .contab-tabs {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    background: #f9fafb;
+    border-radius: 999px;
+    padding: 0.2rem;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    i {
+      font-size: 1rem;
+    }
+
+    &.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+  }
+
+  /* ====== PANEL PRINCIPAL TRANSACCIONES ====== */
+  .contab-panel {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    padding: 1.4rem 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .transacciones-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .btn-open-caja {
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-ingreso {
+    background: #16a34a;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-gasto {
+    background: #dc2626;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-cerrar-caja {
+    margin-left: auto;
+    background: #f97316;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ====== CARD: NO HAY CAJA ====== */
+  .no-caja-card {
+    border-radius: 14px;
+    border: 1px dashed #d1d5db;
+    background: #f9fafb;
+    padding: 2rem 1.5rem;
+    text-align: center;
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .text {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* ====== RESUMEN DEL DÍA ====== */
+  .resumen-dia-card {
+    margin-top: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding: 1.1rem 1.2rem;
+
+    .title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .linea {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+
+      &.apertura span.value {
+        color: #111827;
+      }
+
+      &.ingresos span.value {
+        color: #16a34a;
+      }
+
+      &.egresos span.value {
+        color: #dc2626;
+      }
+
+      &.balance span.value {
+        font-weight: 600;
+      }
+    }
+
+    .label {
+      color: #4b5563;
+    }
+
+    .value {
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  /* ====== TABLA DE TRANSACCIONES ====== */
+  .transacciones-card {
+    margin-top: 0.5rem;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .transacciones-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+  }
+
+  .tabla-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .tabla-transacciones {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: separate !important;
+    border-spacing: 0 8px;
+
+    thead th {
+      border-bottom: none !important;
+      font-size: 0.8rem;
+      color: #6b7280;
+      font-weight: 600;
+      padding-bottom: 0.6rem;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+      border-radius: 10px;
+    }
+
+    tbody td {
+      background: #ffffff;
+      border: none !important;
+      padding: 0.7rem 0.8rem;
+      font-size: 0.9rem;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    tbody tr td:first-child {
+      border-radius: 10px 0 0 10px;
+    }
+
+    tbody tr td:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+
+    .tipo-ingreso {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .tipo-egreso {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .monto {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .acciones {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+
+      i {
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: 0.2s ease;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+}
+
+/* ============================
+   TABLET
+============================ */
+@media (min-width: 768px) {
+  .contabilidad-page {
+    padding: 2rem;
+
+    .page-title,
+    .contab-title {
+      font-size: 2.1rem;
+    }
+
+    .contab-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contab-panel {
+      padding: 1.6rem 1.6rem;
+    }
+  }
+}
+
+/* ============================
+   DESKTOP
+============================ */
+@media (min-width: 1024px) {
+  .contabilidad-page {
+    padding: 2.5rem 3rem;
+
+    .contab-summary {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .contab-panel {
+      padding: 1.8rem 2rem;
+    }
+  }
+}
+
+
+.alert-banner {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &.success {
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #166534;
+  }
+
+  &.error {
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #991b1b;
+  }
+}
