@@ -5,6 +5,7 @@ import { listarTransaccionesPorFecha } from '../../api/flujoCaja';
 import NuevoIngresoModal from './NuevoIngresoModal';
 import NuevoGastoModal from './NuevoGastoModal';
 import CajaActionModal from './CajaActionModal';
+import HistorialCaja from './HistorialCaja'; // ✅ NUEVO
 import '../../styles/contabilidad.scss';
 
 const hoyISO = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
@@ -44,9 +45,14 @@ export default function Contabilidad() {
         abierta: !!data?.abierta,
         caja: data?.caja || null,
       });
+      return {
+        abierta: !!data?.abierta,
+        caja: data?.caja || null,
+      };
     } catch (e) {
       console.error('Error obteniendo estado de caja:', e);
       setCajaHoy({ loading: false, abierta: false, caja: null });
+      return { abierta: false, caja: null };
     }
   };
 
@@ -54,7 +60,7 @@ export default function Contabilidad() {
     setLoading(true);
     try {
       // 0) Estado de la caja (para habilitar/deshabilitar acciones)
-      await refreshEstadoCajaHoy();
+      const estado = await refreshEstadoCajaHoy();
 
       // 1) Resumen del día
       let resumenData = null;
@@ -64,6 +70,17 @@ export default function Contabilidad() {
       } catch {
         resumenData = null;
       }
+
+      // ✅ Si NO hay resumen pero la caja está abierta, mostramos apertura con saldoInicial
+      if (!resumenData && estado?.abierta && estado?.caja) {
+        resumenData = {
+          saldoInicial: estado.caja.saldoInicial ?? 0,
+          ingresosTotales: 0,
+          egresosTotales: 0,
+          saldoFinal: estado.caja.saldoInicial ?? 0,
+        };
+      }
+
       setResumen(resumenData);
 
       // 2) Transacciones del día
@@ -82,7 +99,6 @@ export default function Contabilidad() {
   }, [fecha]);
 
   const abrirCajaModal = () => {
-    // si ya está abierta, no abrimos modal
     if (cajaHoy.abierta) {
       setFlash({ type: 'error', text: 'Ya hay una caja abierta para hoy.' });
       return;
@@ -91,7 +107,6 @@ export default function Contabilidad() {
   };
 
   const cerrarCajaModal = () => {
-    // si no está abierta, no cerramos
     if (!cajaHoy.abierta) {
       setFlash({ type: 'error', text: 'No hay una caja abierta para hoy.' });
       return;
@@ -126,6 +141,10 @@ export default function Contabilidad() {
           type: 'success',
           text: resp?.message || 'Caja cerrada exitosamente.',
         });
+
+        // ✅ si cierras caja y estabas en modales, los cerramos
+        setShowIngreso(false);
+        setShowGasto(false);
       }
 
       await cargarDatos(fecha);
@@ -150,10 +169,11 @@ export default function Contabilidad() {
   const saldoFinal = resumen?.saldoFinal ?? saldoInicial + ingresos - egresos;
 
   // ✅ reglas UI
-  const puedeOperarHoy = !cajaHoy.loading && cajaHoy.abierta; // ingreso/gasto/cerrar solo si hay caja abierta
+  const puedeOperarHoy = !cajaHoy.loading && cajaHoy.abierta;
   const puedeAbrirCaja = !cajaHoy.loading && !cajaHoy.abierta;
 
-  if (loading) {
+  // ✅ Evita render antes de tener estado de caja listo
+  if (loading || cajaHoy.loading) {
     return <div className='contabilidad-page'>Cargando...</div>;
   }
 
@@ -228,7 +248,6 @@ export default function Contabilidad() {
           <i className='bi bi-calendar-day'></i> Hoy
         </button>
 
-        {/* ✅ ya no va disabled */}
         <button
           className={`tab-btn ${tab === 'historial' ? 'active' : ''}`}
           onClick={() => setTab('historial')}
@@ -242,12 +261,14 @@ export default function Contabilidad() {
         <div className='contab-panel'>
           {/* Toolbar superior */}
           <div className='transacciones-toolbar'>
+            {/* ✅ Solo si NO hay caja abierta */}
             {puedeAbrirCaja && (
               <button type='button' className='btn-open-caja' onClick={abrirCajaModal}>
                 <i className='bi bi-door-open'></i> Abrir caja
               </button>
             )}
 
+            {/* ✅ Solo si hay caja abierta */}
             {puedeOperarHoy && (
               <>
                 <button type='button' className='btn-ingreso' onClick={() => setShowIngreso(true)}>
@@ -264,10 +285,8 @@ export default function Contabilidad() {
               </>
             )}
 
-            {/* ✅ si está cerrada, mostramos un texto discreto */}
-            {!cajaHoy.loading && !cajaHoy.abierta && (
-              <span className='caja-estado-label'>Caja del día cerrada</span>
-            )}
+            {/* ✅ Si está cerrada, texto discreto */}
+            {!cajaHoy.abierta && <span className='caja-estado-label'>Caja del día cerrada</span>}
           </div>
 
           {/* Resumen del día (texto) */}
@@ -351,20 +370,11 @@ export default function Contabilidad() {
         </div>
       )}
 
-      {/* ====== PANEL HISTORIAL (placeholder por ahora) ====== */}
-      {tab === 'historial' && (
-        <div className='contab-panel'>
-          <div className='transacciones-card'>
-            <div className='transacciones-title'>Historial</div>
-            <p style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-              Aquí vamos a listar cajas cerradas (filtros + paginación).
-            </p>
-          </div>
-        </div>
-      )}
+      {/* ====== PANEL HISTORIAL ====== */}
+      {tab === 'historial' && <HistorialCaja />}
 
-      {/* Modales de transacciones */}
-      {showIngreso && (
+      {/* ✅ No abrir modales si no hay caja abierta */}
+      {showIngreso && puedeOperarHoy && (
         <NuevoIngresoModal
           show={showIngreso}
           onClose={() => setShowIngreso(false)}
@@ -372,7 +382,7 @@ export default function Contabilidad() {
         />
       )}
 
-      {showGasto && (
+      {showGasto && puedeOperarHoy && (
         <NuevoGastoModal
           show={showGasto}
           onClose={() => setShowGasto(false)}

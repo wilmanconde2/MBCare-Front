@@ -1,3 +1,5 @@
+/* src/styles/contabilidad.scss */
+
 /* ============================
    CONTABILIDAD — MOBILE FIRST
 ============================ */
@@ -130,11 +132,12 @@
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-bottom: 1.1rem;
+    align-items: center;
   }
 
   .btn-open-caja {
-    background: #0d6efd;
-    color: #fff;
+    background: #0d6efd !important;
+    color: white;
     border-radius: 999px;
     padding: 0.55rem 1.3rem;
     border: none;
@@ -183,6 +186,27 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+  }
+
+  /* ====== ESTADO CAJA CERRADA (NUEVO) ====== */
+  .caja-estado-label {
+    margin-left: auto;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 999px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+      content: "●";
+      font-size: 0.65rem;
+      color: #9ca3af;
+    }
   }
 
   /* ====== CARD: NO HAY CAJA ====== */
@@ -324,22 +348,48 @@
     .monto {
       font-variant-numeric: tabular-nums;
     }
+  }
 
-    .acciones {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.7rem;
+  /* ============================
+     ✅ HISTORIAL: SIN SCROLL EN MOBILE
+  ============================ */
 
-      i {
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: 0.2s ease;
+  .tabla-wrapper.no-scroll-mobile {
+    overflow-x: hidden;
+  }
 
-        &:hover {
-          opacity: 0.7;
-        }
+  /* En mobile: ocultamos columnas y evitamos min-width gigante */
+  @media (max-width: 640px) {
+    .tabla-transacciones.tabla-historial {
+      min-width: 0; /* clave para quitar scroll */
+      border-spacing: 0 10px;
+
+      th,
+      td {
+        white-space: nowrap;
       }
+
+      .col-hide-mobile {
+        display: none;
+      }
+
+      /* Ajustes visuales de acciones en mobile */
+      td.acciones {
+        justify-content: flex-end;
+        gap: 0.9rem;
+      }
+    }
+
+    /* Filtros: apilado y sin empujar a overflow */
+    .historial-filtros {
+      gap: 0.6rem !important;
+    }
+
+    .historial-actions {
+      margin-left: 0 !important;
+      width: 100%;
+      justify-content: flex-start;
+      flex-wrap: wrap;
     }
   }
 }
@@ -382,7 +432,6 @@
     }
   }
 }
-
 
 .alert-banner {
   margin-bottom: 1rem;
