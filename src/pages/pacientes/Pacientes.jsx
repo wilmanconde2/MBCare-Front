@@ -84,7 +84,6 @@ export default function Pacientes() {
               <tr>
                 <th>Nombre</th>
                 <th className='hide-mobile'>Documento</th>
-                {/* Teléfono oculto en mobile */}
                 <th className='hide-mobile'>Teléfono</th>
                 <th className='hide-mobile'>Email</th>
                 <th className='acciones-header'>Acciones</th>

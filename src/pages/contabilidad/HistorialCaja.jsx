@@ -1,5 +1,5 @@
 // src/pages/contabilidad/HistorialCaja.jsx
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Fragment } from 'react';
 import { exportarHistorialCajaPDF, obtenerHistorialCajas } from '../../api/caja';
 import '../../styles/contabilidad.scss';
 
@@ -269,9 +269,10 @@ export default function HistorialCaja() {
 
                   const isExpanded = expandedId === caja._id;
 
+                  // ✅ FIX: el key debe ir en el nodo raíz que retorna el map (Fragment)
                   return (
-                    <>
-                      <tr key={caja._id}>
+                    <Fragment key={caja._id}>
+                      <tr>
                         <td>{fechaISO}</td>
 
                         <td className='monto col-hide-mobile'>
@@ -291,18 +292,18 @@ export default function HistorialCaja() {
                         </td>
 
                         <td className='acciones'>
-                          <i
-                            className={`bi ${isExpanded ? 'bi-chevron-up' : 'bi-chevron-down'}`}
-                            title='Ver detalle'
-                            onClick={() => toggleExpand(caja._id)}
-                            style={{ cursor: 'pointer' }}
-                          />
-                          <i
-                            className='bi bi-file-earmark-pdf'
-                            title='Exportar PDF de este día'
-                            onClick={() => exportarPDF({ type: 'single', fechaISO })}
-                            style={{ cursor: 'pointer' }}
-                          />
+                          <div className='acciones-wrapper'>
+                            <i
+                              className={`bi ${isExpanded ? 'bi-chevron-up' : 'bi-chevron-down'}`}
+                              title='Ver detalle'
+                              onClick={() => toggleExpand(caja._id)}
+                            />
+                            <i
+                              className='bi bi-file-earmark-pdf'
+                              title='Exportar PDF de este día'
+                              onClick={() => exportarPDF({ type: 'single', fechaISO })}
+                            />
+                          </div>
                           {abierta && (
                             <span
                               style={{
@@ -387,13 +388,12 @@ export default function HistorialCaja() {
                                   fontSize: '0.85rem',
                                   color: '#6b7280',
                                 }}
-                              >
-                              </div>
+                              ></div>
                             </div>
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>

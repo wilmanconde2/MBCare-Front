@@ -5,7 +5,7 @@ import { listarTransaccionesPorFecha } from '../../api/flujoCaja';
 import NuevoIngresoModal from './NuevoIngresoModal';
 import NuevoGastoModal from './NuevoGastoModal';
 import CajaActionModal from './CajaActionModal';
-import HistorialCaja from './HistorialCaja'; // ✅ NUEVO
+import HistorialCaja from './HistorialCaja';
 import '../../styles/contabilidad.scss';
 
 const hoyISO = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'

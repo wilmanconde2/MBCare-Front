@@ -203,7 +203,7 @@
     gap: 6px;
 
     &::before {
-      content: "●";
+      content: '●';
       font-size: 0.65rem;
       color: #9ca3af;
     }
@@ -297,6 +297,20 @@
     overflow-x: auto;
   }
 
+  .acciones-wrapper {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+
+    i {
+      cursor: pointer;
+    }
+
+    .bi-file-earmark-pdf{
+      color: red;
+    }
+  }
+
   .tabla-transacciones {
     width: 100%;
     min-width: 650px;
@@ -371,12 +385,6 @@
 
       .col-hide-mobile {
         display: none;
-      }
-
-      /* Ajustes visuales de acciones en mobile */
-      td.acciones {
-        justify-content: flex-end;
-        gap: 0.9rem;
       }
     }
 
