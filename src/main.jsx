@@ -10,7 +10,6 @@ import './styles/global.scss';
 import './styles/auth.scss';
 import './styles/layout.scss';
 import './styles/pacientes.scss';
-import './styles/nuevoPacienteModal.scss';
 import './styles/pacienteEditar.scss';
 import './styles/pacienteDetalle.scss';
 import './styles/contabilidad.scss';

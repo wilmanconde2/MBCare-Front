@@ -1,0 +1,75 @@
+/* SOLO estilos internos del formulario de Nota Clínica */
+
+.modal-box.modal-form {
+  max-width: 760px;
+  width: 94%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.nc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.nc-full {
+  grid-column: 1 / -1;
+}
+
+.nc-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.nc-field input,
+.nc-field textarea {
+  width: 100%;
+  border: 1px solid #d7d7d7;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.nc-field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.nc-locked-box {
+  background: #f8f9fc;
+  border: 1px solid #e3e7ef;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.nc-locked-main {
+  font-weight: 600;
+  color: #111;
+}
+
+.nc-locked-sub {
+  margin-top: 3px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.nc-error {
+  margin-top: 12px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #9f1239;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .nc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

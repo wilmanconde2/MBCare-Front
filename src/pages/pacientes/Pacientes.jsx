@@ -27,6 +27,20 @@ export default function Pacientes() {
     loadPacientes();
   }, []);
 
+  // ✅ Opción A: bloquear scroll del body cuando haya modal abierto
+  useEffect(() => {
+    const hasModalOpen = showModal || !!confirmId;
+
+    if (hasModalOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [showModal, confirmId]);
+
   async function handleDelete() {
     try {
       await deletePaciente(confirmId);
@@ -43,30 +57,46 @@ export default function Pacientes() {
   return (
     <div className='pacientes-page'>
       {/* Encabezado */}
-      <div className='d-flex justify-content-between align-items-center mb-3'>
+      <div className='pacientes-header'>
         <h2 className='page-title'>Pacientes</h2>
 
-        <button className='btn-nueva-cita' onClick={() => setShowModal(true)}>
+        <button className='btn-primary-action' onClick={() => setShowModal(true)}>
           <i className='bi bi-plus-circle'></i> Nuevo Paciente
         </button>
       </div>
 
-      {/* Modal Crear */}
-      {showModal && <NuevoPacienteModal close={() => setShowModal(false)} reload={loadPacientes} />}
+      {/* ✅ Modal Crear (Bootstrap) */}
+      <NuevoPacienteModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onSuccess={loadPacientes}
+      />
 
-      {/* Modal Confirmar Eliminar */}
+      {/* Modal Confirmar Eliminar (tu overlay actual) */}
       {confirmId && (
-        <div className='modal-overlay'>
-          <div className='confirm-modal'>
-            <h3>¿Eliminar paciente?</h3>
-            <p>Esta acción no se puede deshacer.</p>
+        <div className='modal-overlay' role='dialog' aria-modal='true'>
+          <div className='modal-box modal-confirm'>
+            <div className='modal-header'>
+              <h3 className='modal-title'>¿Eliminar paciente?</h3>
+              <button
+                className='modal-close'
+                onClick={() => setConfirmId(null)}
+                aria-label='Cerrar'
+              >
+                ✕
+              </button>
+            </div>
 
-            <div className='confirm-buttons'>
-              <button className='btn-cancel' onClick={() => setConfirmId(null)}>
+            <div className='modal-body'>
+              <p>Esta acción no se puede deshacer.</p>
+            </div>
+
+            <div className='modal-footer modal-actions'>
+              <button className='btn-secondary' onClick={() => setConfirmId(null)}>
                 Cancelar
               </button>
 
-              <button className='btn-delete' onClick={handleDelete}>
+              <button className='btn-danger' onClick={handleDelete}>
                 Eliminar
               </button>
             </div>
@@ -93,11 +123,10 @@ export default function Pacientes() {
             <tbody>
               {pacientes.map((p) => (
                 <tr key={p._id}>
-                  <td>{p.nombreCompleto}</td>
+                  <td className='td-main'>{p.nombreCompleto}</td>
 
                   <td className='hide-mobile'>{p.numeroDocumento}</td>
 
-                  {/* Teléfono también con hide-mobile */}
                   <td className='hide-mobile'>{p.telefono || '-'}</td>
 
                   <td className='hide-mobile'>{p.email || '-'}</td>
@@ -106,16 +135,19 @@ export default function Pacientes() {
                     <i
                       className='bi bi-eye text-primary'
                       onClick={() => navigate(`/app/pacientes/${p._id}`)}
+                      title='Ver'
                     ></i>
 
                     <i
                       className='bi bi-pencil-square text-primary ms-3'
                       onClick={() => navigate(`/app/pacientes/${p._id}/editar`)}
+                      title='Editar'
                     ></i>
 
                     <i
                       className='bi bi-x-circle text-danger ms-3'
                       onClick={() => setConfirmId(p._id)}
+                      title='Eliminar'
                     ></i>
                   </td>
                 </tr>
@@ -123,6 +155,8 @@ export default function Pacientes() {
             </tbody>
           </table>
         </div>
+
+        {!pacientes.length && <p className='empty-state'>No hay pacientes registrados.</p>}
       </div>
     </div>
   );

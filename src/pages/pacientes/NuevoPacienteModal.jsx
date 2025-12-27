@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { createPaciente } from '../../api/pacientes';
+import '../../styles/nuevaCitaModal.scss';
 
-export default function NuevoPacienteModal({ close, reload }) {
+export default function NuevoPacienteModal({ show, onHide, onSuccess }) {
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     nombreCompleto: '',
     tipoDocumento: 'CC',
@@ -16,154 +20,205 @@ export default function NuevoPacienteModal({ close, reload }) {
     observaciones: '',
   });
 
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  useEffect(() => {
+    if (!show) {
+      setForm({
+        nombreCompleto: '',
+        tipoDocumento: 'CC',
+        numeroDocumento: '',
+        fechaNacimiento: '',
+        genero: '',
+        telefono: '',
+        email: '',
+        direccion: '',
+        contactoEmergencia: '',
+        telefonoEmergencia: '',
+        observaciones: '',
+      });
+      setLoading(false);
+    }
+  }, [show]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleGuardar = async () => {
+    if (loading) return;
+
     try {
+      setLoading(true);
       await createPaciente(form);
-      reload();
-      close();
+      onHide?.();
+      onSuccess?.();
     } catch (err) {
       console.error('Error creando paciente:', err);
       alert('Error creando paciente');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className='modal-overlay'>
-      <div className='paciente-modal'>
-        <div className='modal-header'>
-          <h3>Nuevo Paciente</h3>
-          <button className='close-x' onClick={close}>
-            <i className='bi bi-x-lg'></i>
-          </button>
-        </div>
+    <Modal show={!!show} onHide={onHide} centered backdrop='static'>
+      <Modal.Header closeButton>
+        <Modal.Title>Nuevo Paciente</Modal.Title>
+      </Modal.Header>
 
-        <form className='modal-form' onSubmit={handleSubmit}>
-          <div className='form-grid'>
-            {/* Nombre */}
-            <div>
-              <label>Nombre Completo *</label>
-              <input
-                type='text'
-                name='nombreCompleto'
-                value={form.nombreCompleto}
-                onChange={handleChange}
-                required
-              />
-            </div>
+      <Modal.Body>
+        <Form>
+          <Row className='g-3'>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Nombre Completo *</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='nombreCompleto'
+                  value={form.nombreCompleto}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Tipo documento */}
-            <div>
-              <label>Tipo Documento *</label>
-              <select name='tipoDocumento' value={form.tipoDocumento} onChange={handleChange}>
-                <option value='CC'>CC</option>
-                <option value='TI'>TI</option>
-                <option value='CE'>CE</option>
-                <option value='Pasaporte'>Pasaporte</option>
-                <option value='Otro'>Otro</option>
-              </select>
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Tipo Documento *</Form.Label>
+                <Form.Select
+                  name='tipoDocumento'
+                  value={form.tipoDocumento}
+                  onChange={handleChange}
+                >
+                  <option value='CC'>CC</option>
+                  <option value='TI'>TI</option>
+                  <option value='CE'>CE</option>
+                  <option value='Pasaporte'>Pasaporte</option>
+                  <option value='Otro'>Otro</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
 
-            {/* Documento */}
-            <div>
-              <label>Número de Documento *</label>
-              <input
-                type='text'
-                name='numeroDocumento'
-                value={form.numeroDocumento}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Número de Documento *</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='numeroDocumento'
+                  value={form.numeroDocumento}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Fecha nacimiento */}
-            <div>
-              <label>Fecha de Nacimiento</label>
-              <input
-                type='date'
-                name='fechaNacimiento'
-                value={form.fechaNacimiento}
-                onChange={handleChange}
-              />
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Fecha de Nacimiento</Form.Label>
+                <Form.Control
+                  type='date'
+                  name='fechaNacimiento'
+                  value={form.fechaNacimiento}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Género */}
-            <div>
-              <label>Género</label>
-              <select name='genero' value={form.genero} onChange={handleChange}>
-                <option value=''>Seleccione</option>
-                <option value='Masculino'>Masculino</option>
-                <option value='Femenino'>Femenino</option>
-                <option value='Otro'>Otro</option>
-              </select>
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Género</Form.Label>
+                <Form.Select name='genero' value={form.genero} onChange={handleChange}>
+                  <option value=''>Seleccione</option>
+                  <option value='Masculino'>Masculino</option>
+                  <option value='Femenino'>Femenino</option>
+                  <option value='Otro'>Otro</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
 
-            {/* Teléfono */}
-            <div>
-              <label>Teléfono</label>
-              <input type='text' name='telefono' value={form.telefono} onChange={handleChange} />
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Teléfono</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='telefono'
+                  value={form.telefono}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Email */}
-            <div className='full'>
-              <label>Email</label>
-              <input type='email' name='email' value={form.email} onChange={handleChange} />
-            </div>
+            <Col xs={12}>
+              <Form.Group>
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type='email'
+                  name='email'
+                  value={form.email}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Dirección */}
-            <div className='full'>
-              <label>Dirección</label>
-              <input type='text' name='direccion' value={form.direccion} onChange={handleChange} />
-            </div>
+            <Col xs={12}>
+              <Form.Group>
+                <Form.Label>Dirección</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='direccion'
+                  value={form.direccion}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Contacto Emergencia */}
-            <div>
-              <label>Contacto Emergencia</label>
-              <input
-                type='text'
-                name='contactoEmergencia'
-                value={form.contactoEmergencia}
-                onChange={handleChange}
-              />
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Contacto Emergencia</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='contactoEmergencia'
+                  value={form.contactoEmergencia}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Teléfono Emergencia */}
-            <div>
-              <label>Teléfono Emergencia</label>
-              <input
-                type='text'
-                name='telefonoEmergencia'
-                value={form.telefonoEmergencia}
-                onChange={handleChange}
-              />
-            </div>
+            <Col xs={12} md={6}>
+              <Form.Group>
+                <Form.Label>Teléfono Emergencia</Form.Label>
+                <Form.Control
+                  type='text'
+                  name='telefonoEmergencia'
+                  value={form.telefonoEmergencia}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
 
-            {/* Observaciones */}
-            <div className='full'>
-              <label>Observaciones</label>
-              <textarea
-                rows='3'
-                name='observaciones'
-                value={form.observaciones}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-          </div>
+            <Col xs={12}>
+              <Form.Group>
+                <Form.Label>Observaciones</Form.Label>
+                <Form.Control
+                  as='textarea'
+                  rows={3}
+                  name='observaciones'
+                  value={form.observaciones}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
 
-          <div className='modal-buttons'>
-            <button type='button' className='btn-cancel' onClick={close}>
-              Cancelar
-            </button>
-            <button type='submit' className='btn-create'>
-              Crear
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <Modal.Footer>
+        <Button variant='secondary' onClick={onHide} disabled={loading}>
+          Cancelar
+        </Button>
+        <Button onClick={handleGuardar} disabled={loading}>
+          {loading ? 'Guardando...' : 'Crear'}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
