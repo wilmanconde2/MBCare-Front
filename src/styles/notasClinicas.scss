@@ -2,9 +2,7 @@
   padding: 1.2rem;
   width: 100%;
   max-width: 100%;
-
-  /* ✅ importante: evitar desborde horizontal SIN matar el scroll vertical */
-  overflow-x: clip; /* mejor que hidden en layouts modernos */
+  overflow-x: clip;
   overflow-y: visible;
 
   *,
@@ -18,38 +16,33 @@
     font-weight: 700;
     margin: 0;
     line-height: 1.1;
-
-    /* ✅ evita que el título empuje el header a overflow */
     min-width: 220px;
     flex: 1 1 auto;
   }
 
-  /* ✅ Header: ahora envuelve bien en tablet */
   .notas-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 1rem;
-
     width: 100%;
     max-width: 100%;
-    flex-wrap: wrap; /* ✅ clave */
+    flex-wrap: wrap;
   }
 
   .notas-actions {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap; /* ✅ clave */
+    flex-wrap: wrap;
     justify-content: flex-end;
-
     max-width: 100%;
     flex: 0 1 auto;
   }
 
   .btn-nueva-nota {
     background: #0d6efd;
-    color: white;
+    color: #fff;
     padding: 0.5rem 0.9rem;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -79,15 +72,13 @@
   }
 
   .notas-card {
-    background: white;
+    background: #fff;
     border-radius: 12px;
     padding: 1.5rem 1.2rem;
     border: 1px solid #eaeaea;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     width: 100%;
     max-width: 100%;
-
-    /* ✅ evita que Typeahead/menu o contenido se salga del card */
     overflow: hidden;
   }
 
@@ -97,12 +88,18 @@
     margin-bottom: 1rem;
   }
 
+  /* Typeahead: el card de búsqueda NO debe cortar el dropdown */
+  .notas-card--search {
+    overflow: visible;
+  }
+
   .notas-search {
     max-width: 680px;
     width: 100%;
+    position: relative;
+    z-index: 50;
   }
 
-  /* ✅ Typeahead: el wrapper también debe respetar ancho */
   .rbt,
   .rbt-input-main,
   .rbt-input {
@@ -115,9 +112,12 @@
     max-width: 100%;
   }
 
-  /* ✅ el “x” de clear button a veces empuja (tablet) */
   .rbt-aux {
     max-width: 40px;
+  }
+
+  .rbt-menu {
+    z-index: 9999 !important;
   }
 
   .notas-paciente-info {
@@ -128,7 +128,7 @@
     .info-strong {
       font-weight: 600;
       color: #222;
-      overflow-wrap: anywhere; /* ✅ si hay nombres largos */
+      overflow-wrap: anywhere;
     }
 
     .info-muted {
@@ -219,8 +219,6 @@
   }
 }
 
-/* ====== BREAKPOINTS ====== */
-
 @media (min-width: 768px) {
   .notas-page {
     padding: 2rem;
@@ -289,23 +287,5 @@
       font-size: 1.05rem;
       margin-bottom: 0.75rem;
     }
-  }
-}
-/* ✅ FIX Typeahead dropdown en mobile/tablet */
-.notas-page {
-  /* el card donde está el buscador NO debe cortar el dropdown */
-  .notas-card {
-    overflow: visible;
-  }
-
-  /* contenedor del typeahead */
-  .notas-search {
-    position: relative;
-    z-index: 50;
-  }
-
-  /* menú desplegable del typeahead */
-  .rbt-menu {
-    z-index: 9999 !important;
   }
 }

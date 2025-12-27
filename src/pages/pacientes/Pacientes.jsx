@@ -27,7 +27,7 @@ export default function Pacientes() {
     loadPacientes();
   }, []);
 
-  // ✅ Opción A: bloquear scroll del body cuando haya modal abierto
+  // ✅ Bloquear scroll del body cuando haya modal abierto
   useEffect(() => {
     const hasModalOpen = showModal || !!confirmId;
 
@@ -40,6 +40,17 @@ export default function Pacientes() {
       };
     }
   }, [showModal, confirmId]);
+
+  useEffect(() => {
+    if (!confirmId) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setConfirmId(null);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [confirmId]);
 
   async function handleDelete() {
     try {
@@ -60,45 +71,79 @@ export default function Pacientes() {
       <div className='pacientes-header'>
         <h2 className='page-title'>Pacientes</h2>
 
-        <button className='btn-primary-action' onClick={() => setShowModal(true)}>
+        <button className='btn-primary-action' onClick={() => setShowModal(true)} type='button'>
           <i className='bi bi-plus-circle'></i> Nuevo Paciente
         </button>
       </div>
 
-      {/* ✅ Modal Crear (Bootstrap) */}
+      {/* Modal Crear (Bootstrap) */}
       <NuevoPacienteModal
         show={showModal}
         onHide={() => setShowModal(false)}
         onSuccess={loadPacientes}
       />
 
-      {/* Modal Confirmar Eliminar (tu overlay actual) */}
+      {/* Modal Confirmar Eliminar */}
       {confirmId && (
-        <div className='modal-overlay' role='dialog' aria-modal='true'>
-          <div className='modal-box modal-confirm'>
-            <div className='modal-header'>
-              <h3 className='modal-title'>¿Eliminar paciente?</h3>
-              <button
-                className='modal-close'
-                onClick={() => setConfirmId(null)}
-                aria-label='Cerrar'
-              >
-                ✕
-              </button>
-            </div>
+        <div
+          className='confirm-modal'
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='confirm-title'
+        >
+          <div
+            className='cm-overlay'
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) setConfirmId(null);
+            }}
+          >
+            <div className='cm-box cm-pop' role='document'>
+              <div className='cm-header'>
+                <div className='cm-header-left'>
+                  <span className='cm-icon' aria-hidden='true'>
+                    <i className='bi bi-exclamation-triangle-fill'></i>
+                  </span>
+                  <div>
+                    <h3 id='confirm-title' className='cm-title'>
+                      Eliminar paciente
+                    </h3>
+                    <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
+                  </div>
+                </div>
 
-            <div className='modal-body'>
-              <p>Esta acción no se puede deshacer.</p>
-            </div>
+                <button
+                  className='cm-close'
+                  onClick={() => setConfirmId(null)}
+                  aria-label='Cerrar'
+                  type='button'
+                >
+                  <i className='bi bi-x'></i>
+                </button>
+              </div>
 
-            <div className='modal-footer modal-actions'>
-              <button className='btn-secondary' onClick={() => setConfirmId(null)}>
-                Cancelar
-              </button>
+              <div className='cm-body'>
+                <div className='cm-callout'>
+                  <div className='cm-dot' />
+                  <p>
+                    Se eliminará el paciente y sus datos asociados (si aplica). ¿Deseas continuar?
+                  </p>
+                </div>
+              </div>
 
-              <button className='btn-danger' onClick={handleDelete}>
-                Eliminar
-              </button>
+              <div className='cm-footer'>
+                <button
+                  className='cm-btn cm-btn-ghost'
+                  onClick={() => setConfirmId(null)}
+                  type='button'
+                >
+                  Cancelar
+                </button>
+
+                <button className='cm-btn cm-btn-danger' onClick={handleDelete} type='button'>
+                  <i className='bi bi-trash3'></i>
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -113,7 +158,7 @@ export default function Pacientes() {
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th className='hide-mobile'>Documento</th>
+                <th className='hide-mobile doc-col'>Documento</th>
                 <th className='hide-mobile'>Teléfono</th>
                 <th className='hide-mobile'>Email</th>
                 <th className='acciones-header'>Acciones</th>
@@ -123,9 +168,17 @@ export default function Pacientes() {
             <tbody>
               {pacientes.map((p) => (
                 <tr key={p._id}>
-                  <td className='td-main'>{p.nombreCompleto}</td>
+                  {/* ✅ En mobile: Nombre + Documento debajo (igual Agenda) */}
+                  <td className='td-main'>
+                    {p.nombreCompleto}
+                    <br />
+                    <small className='text-muted paciente-doc-mobile'>
+                      {p.numeroDocumento || '-'}
+                    </small>
+                  </td>
 
-                  <td className='hide-mobile'>{p.numeroDocumento}</td>
+                  {/* ✅ En desktop: columna documento normal */}
+                  <td className='hide-mobile doc-col'>{p.numeroDocumento}</td>
 
                   <td className='hide-mobile'>{p.telefono || '-'}</td>
 

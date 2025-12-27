@@ -1,5 +1,5 @@
 /* ===========================
-   PACIENTES — MOBILE FIRST
+   PACIENTES
 =========================== */
 
 .pacientes-page {
@@ -15,7 +15,6 @@
   }
 }
 
-/* Header consistente */
 .pacientes-header {
   display: flex;
   justify-content: space-between;
@@ -25,10 +24,9 @@
   flex-wrap: wrap;
 }
 
-/* Botón principal consistente */
 .btn-primary-action {
   background: #0d6efd;
-  color: white;
+  color: #fff;
   padding: 0.5rem 0.9rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -48,9 +46,8 @@
   }
 }
 
-/* CARD */
 .pacientes-card {
-  background: white;
+  background: #fff;
   border-radius: 12px;
   padding: 1.5rem 1.2rem;
   border: 1px solid #eaeaea;
@@ -63,7 +60,6 @@
   margin-bottom: 1rem;
 }
 
-/* WRAPPER TABLA */
 .table-wrapper {
   width: 100%;
   max-width: 100%;
@@ -72,7 +68,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* TABLA ESTILO AGENDA */
 .pacientes-table {
   width: 100%;
   border-collapse: separate !important;
@@ -90,7 +85,7 @@
   tbody tr {
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   }
 
   tbody td {
@@ -99,12 +94,22 @@
     background: #fff;
     border: none !important;
     white-space: nowrap;
+    vertical-align: middle;
   }
 
   .td-main {
     max-width: 260px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: normal; /* ✅ permite doc debajo en mobile */
+    line-height: 1.15;
+  }
+
+  .paciente-doc-mobile {
+    display: inline-block;
+    margin-top: 3px;
+    font-size: 0.82rem;
+    color: #6b7280;
   }
 
   tbody tr td:first-child {
@@ -136,7 +141,13 @@
   }
 }
 
+/* Mobile-first: ocultamos columnas extra */
 .hide-mobile {
+  display: none;
+}
+
+/* Documento (columna) oculta en mobile (redundante con hide-mobile, pero explícito) */
+.doc-col {
   display: none;
 }
 
@@ -147,107 +158,9 @@
 }
 
 /* ===========================
-   MODALES (Opción A) — Base
-   (para que queden por encima de sidebar/topbar)
-=========================== */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000; /* ✅ arriba del sidebar/topbar */
-  padding: 16px;
-}
-
-.modal-box {
-  width: 100%;
-  max-width: 520px;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  max-height: 90vh;
-  overflow: auto;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e1e1e1;
-}
-
-.modal-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.modal-close {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal-body {
-  padding: 14px 16px;
-  font-size: 0.95rem;
-
-  p {
-    margin: 0;
-    color: #555;
-  }
-}
-
-.modal-footer {
-  padding: 12px 16px;
-  border-top: 1px solid #e1e1e1;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-/* Botones consistentes */
-.btn-secondary {
-  background: #eee;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-danger {
-  background: #dc3545;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background: #c82333;
-  }
-}
-
-/* Confirm modal (opcional) */
-.modal-confirm {
-  max-width: 420px;
-}
-
-/* ===========================
    BREAKPOINTS
 =========================== */
 
-/* TABLET */
 @media (min-width: 768px) {
   .pacientes-page {
     padding: 2rem;
@@ -260,13 +173,8 @@
   .pacientes-card {
     padding: 2rem;
   }
-
-  .modal-overlay {
-    padding: 24px;
-  }
 }
 
-/* DESKTOP */
 @media (min-width: 1024px) {
   .pacientes-page {
     padding: 2.5rem 3rem;
@@ -278,5 +186,18 @@
 
   .hide-mobile {
     display: table-cell;
+  }
+
+  /* ✅ En desktop: mostramos columna Documento y ocultamos doc “mobile” */
+  .doc-col {
+    display: table-cell;
+  }
+
+  .pacientes-table .paciente-doc-mobile {
+    display: none;
+  }
+
+  .pacientes-table .td-main {
+    white-space: nowrap; /* vuelve a tabla más compacta en desktop */
   }
 }

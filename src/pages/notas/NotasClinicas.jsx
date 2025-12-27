@@ -83,6 +83,18 @@ export default function NotasClinicas() {
   }, []);
 
   useEffect(() => {
+    if (!confirmId) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setConfirmId(null);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [confirmId]);
+
+
+  useEffect(() => {
     const hasModalOpen = Boolean(confirmId) || showNuevaEditar || showDetalle;
     document.body.style.overflow = hasModalOpen ? 'hidden' : initialBodyOverflowRef.current;
 
@@ -266,33 +278,65 @@ export default function NotasClinicas() {
         )}
       </div>
 
-      {/* Confirm delete (patrón Pacientes) */}
+      {/* Modal Confirmar Eliminar */}
       {confirmId && (
-        <div className='modal-overlay' role='dialog' aria-modal='true'>
-          <div className='modal-box modal-confirm'>
-            <div className='modal-header'>
-              <h3 className='modal-title'>¿Eliminar nota?</h3>
-              <button
-                className='modal-close'
-                onClick={() => setConfirmId(null)}
-                aria-label='Cerrar'
-              >
-                ✕
-              </button>
-            </div>
+        <div
+          className='confirm-modal'
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='confirm-title'
+        >
+          <div
+            className='cm-overlay'
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) setConfirmId(null);
+            }}
+          >
+            <div className='cm-box cm-pop' role='document'>
+              <div className='cm-header'>
+                <div className='cm-header-left'>
+                  <span className='cm-icon' aria-hidden='true'>
+                    <i className='bi bi-exclamation-triangle-fill'></i>
+                  </span>
+                  <div>
+                    <h3 id='confirm-title' className='cm-title'>
+                      Eliminar nota
+                    </h3>
+                    <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
+                  </div>
+                </div>
 
-            <div className='modal-body'>
-              <p>Esta acción no se puede deshacer.</p>
-            </div>
+                <button
+                  className='cm-close'
+                  onClick={() => setConfirmId(null)}
+                  aria-label='Cerrar'
+                  type='button'
+                >
+                  <i className='bi bi-x'></i>
+                </button>
+              </div>
 
-            <div className='modal-footer modal-actions'>
-              <button className='btn-secondary' onClick={() => setConfirmId(null)} type='button'>
-                Cancelar
-              </button>
+              <div className='cm-body'>
+                <div className='cm-callout'>
+                  <div className='cm-dot' />
+                  <p>Se eliminará la nota clínica. ¿Deseas continuar?</p>
+                </div>
+              </div>
 
-              <button className='btn-danger' onClick={handleDelete} type='button'>
-                Eliminar
-              </button>
+              <div className='cm-footer'>
+                <button
+                  className='cm-btn cm-btn-ghost'
+                  onClick={() => setConfirmId(null)}
+                  type='button'
+                >
+                  Cancelar
+                </button>
+
+                <button className='cm-btn cm-btn-danger' onClick={handleDelete} type='button'>
+                  <i className='bi bi-trash3'></i>
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
         </div>

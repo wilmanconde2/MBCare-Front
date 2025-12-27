@@ -78,6 +78,8 @@ export default function Dashboard() {
           <i className='bi bi-file-text icon'></i>
         </div>
 
+        {/* ✅ Recordatorios desactivado por ahora */}
+        {/*
         <div className='dash-card'>
           <div>
             <h3>Recordatorios</h3>
@@ -86,6 +88,7 @@ export default function Dashboard() {
           </div>
           <i className='bi bi-bell icon'></i>
         </div>
+        */}
       </div>
 
       {/* ============================
