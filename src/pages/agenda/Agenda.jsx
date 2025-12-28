@@ -152,7 +152,7 @@ const Agenda = () => {
                       {/* Mostrar cancelar SOLO si está Programada */}
                       {cita.estado === 'Programada' && (
                         <i
-                          className='bi bi-x-circle text-danger ms-3'
+                          className='bi bi-x-circle text-danger ms-1'
                           title='Cancelar'
                           onClick={() => setConfirmId(cita._id)}
                         ></i>

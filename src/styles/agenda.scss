@@ -1,40 +1,32 @@
 .agenda-page {
   padding: 1.2rem;
 
-  .agenda-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .page-title {
+  h2 {
     font-size: 1.8rem;
     font-weight: 700;
     color: #1a1a1a;
-    margin: 0;
+    margin-bottom: 1.2rem;
   }
 
+  /* Botón Nueva Cita */
   .btn-nueva-cita {
     background: #0d6efd;
     padding: 0.5rem 0.9rem;
     border-radius: 8px;
     font-weight: 500;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
     font-size: 0.9rem;
-    border: none;
 
     i {
       font-size: 1rem;
     }
   }
 
+  /* Card contenedora */
   .agenda-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 12px;
     padding: 1.5rem 1.2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -49,19 +41,7 @@
     color: #252525;
   }
 
-  .table-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ✅ Mobile-first: ocultar columnas no esenciales */
-  .hide-mobile {
-    display: none;
-  }
-
+  /******** TABLA ********/
   .tabla-citas {
     border-collapse: separate !important;
     border-spacing: 0 10px;
@@ -78,7 +58,7 @@
     tbody tr {
       background: #fff;
       border-radius: 10px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.06);
     }
 
     tbody td {
@@ -87,7 +67,6 @@
       vertical-align: middle;
       border: none !important;
       font-size: 0.9rem;
-      white-space: nowrap;
     }
 
     tbody tr td:first-child {
@@ -98,63 +77,35 @@
       border-radius: 0 10px 10px 0;
     }
 
-    /* ✅ Fecha: hora debajo (evita columna gigante) */
-    td.col-fecha {
-      white-space: normal; /* permite salto de línea */
-      line-height: 1.1;
-      min-width: 92px;
-    }
+    /* Acciones */
 
-    .fecha-dia {
-      display: block;
-      font-weight: 600;
-      color: #111827;
-    }
-
-    .fecha-hora {
-      display: block;
-      margin-top: 3px;
-      font-size: 0.82rem;
-      color: #6b7280;
-    }
-
-    .th-acciones {
-      text-align: center;
-    }
-
-    .acciones {
+     .acciones {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 0.75rem;
       white-space: nowrap;
-
-      i {
-        font-size: 1.15rem;
-        cursor: pointer;
-        transition: 0.2s ease;
-
-        &:hover {
-          opacity: 0.7;
-        }
-      }
     }
+    
+    .acciones i {
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: 0.2s ease;
 
-    .empty {
-      text-align: center;
-      color: #666;
-      background: transparent;
-      padding: 1.2rem 0.8rem;
+      &:hover {
+        opacity: 0.7;
+      }
     }
   }
 }
 
-/* TABLET */
+/* ==========================
+   TABLET
+========================== */
 @media (min-width: 768px) {
   .agenda-page {
     padding: 2rem;
 
-    .page-title {
+    h2 {
       font-size: 2rem;
     }
 
@@ -165,20 +116,17 @@
     .tabla-citas tbody td {
       font-size: 0.95rem;
     }
-
-    /* ✅ desde tablet: mostrar las columnas ocultas */
-    .hide-mobile {
-      display: table-cell;
-    }
   }
 }
 
-/* DESKTOP */
-@media (min-width: 1024px) {
+/* ==========================
+   DESKTOP
+========================== */
+@media (min-width: 1200px) {
   .agenda-page {
     padding: 2.5rem 3rem;
 
-    .page-title {
+    h2 {
       font-size: 2.1rem;
     }
 

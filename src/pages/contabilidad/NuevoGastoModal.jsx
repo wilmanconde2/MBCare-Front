@@ -1,35 +1,79 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from '../../api/axios';
 
 const CATEGORIAS_EGRESO = [
-  'Salarios',
-  'Alquiler',
+  'Arriendo',
   'Servicios',
+  'Nómina',
   'Suministros',
   'Mantenimiento',
-  'Publicidad',
-  'Capacitación',
+  'Impuestos',
+  'Marketing',
+  'Transporte',
   'Otros Gastos',
 ];
-
-const TIPOS_SERVICIO = ['Luz', 'Agua', 'Internet', 'Teléfono', 'Otro'];
 
 const METODOS_PAGO = ['Efectivo', 'Tarjeta', 'Transferencia', 'Otro'];
 
 const initialForm = {
   categoria: '',
-  subServicio: '',
   descripcion: '',
   monto: '0',
   metodoPago: 'Efectivo',
-  numeroFactura: '',
+  numeroRecibo: '',
   notas: '',
 };
 
-const NuevoGastoModal = ({ show, onClose, onCreated }) => {
+function parseDescripcion(raw) {
+  if (!raw) return { descripcion: '', numeroRecibo: '', notas: '' };
+
+  const parts = String(raw)
+    .split(' | ')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const base = parts.shift() || '';
+
+  let numeroRecibo = '';
+  let notas = '';
+
+  for (const p of parts) {
+    if (p.toLowerCase().startsWith('recibo:')) {
+      numeroRecibo = p.slice('recibo:'.length).trim();
+    } else if (p.toLowerCase().startsWith('notas:')) {
+      notas = p.slice('notas:'.length).trim();
+    }
+  }
+
+  return { descripcion: base, numeroRecibo, notas };
+}
+
+const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccion = null }) => {
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
+
+  const esEditar = mode === 'edit' && !!transaccion?._id;
+  const titulo = useMemo(() => (esEditar ? 'Editar Egreso' : 'Nuevo Gasto'), [esEditar]);
+
+  // Precargar formulario en modo edición
+  useEffect(() => {
+    if (!show) return;
+
+    if (esEditar && transaccion) {
+      const parsed = parseDescripcion(transaccion.descripcion);
+
+      setForm({
+        categoria: transaccion.categoria || '',
+        descripcion: parsed.descripcion || '',
+        monto: String(transaccion.monto ?? '0'),
+        metodoPago: transaccion.metodoPago || 'Efectivo',
+        numeroRecibo: parsed.numeroRecibo || '',
+        notas: parsed.notas || '',
+      });
+    } else {
+      setForm(initialForm);
+    }
+  }, [show, esEditar, transaccion]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,28 +94,17 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
       return;
     }
 
-    if (form.categoria === 'Servicios' && !form.subServicio) {
-      window.alert('Selecciona el tipo de servicio.');
-      return;
-    }
-
     const montoNumber = Number(form.monto);
     if (Number.isNaN(montoNumber) || montoNumber <= 0) {
       window.alert('El monto debe ser un número mayor que 0.');
       return;
     }
 
-    // Armar descripción final
+    // Compactar concepto + datos opcionales en "descripcion"
     let descripcion = form.descripcion.trim();
-
-    if (form.categoria === 'Servicios' && form.subServicio) {
-      descripcion = `[Servicio: ${form.subServicio}] ${descripcion}`;
+    if (form.numeroRecibo) {
+      descripcion += ` | Recibo: ${form.numeroRecibo.trim()}`;
     }
-
-    if (form.numeroFactura) {
-      descripcion += ` | Factura: ${form.numeroFactura.trim()}`;
-    }
-
     if (form.notas) {
       descripcion += ` | Notas: ${form.notas.trim()}`;
     }
@@ -86,12 +119,19 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
 
     try {
       setSaving(true);
-      await axios.post('/flujo-caja/crear', payload);
+
+      if (esEditar) {
+        await axios.put(`/flujo-caja/transaccion/${transaccion._id}`, payload);
+      } else {
+        await axios.post('/flujo-caja/crear', payload);
+      }
+
       onCreated && onCreated();
       handleClose();
     } catch (e) {
       console.error('Error al guardar gasto', e);
-      window.alert('Error al guardar el gasto.');
+      const msg = e?.response?.data?.message || 'Error al guardar el gasto.';
+      window.alert(msg);
     } finally {
       setSaving(false);
     }
@@ -100,7 +140,7 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
   return (
     <Modal show={show} onHide={handleClose} centered backdrop='static'>
       <Modal.Header closeButton>
-        <Modal.Title>Nuevo Gasto</Modal.Title>
+        <Modal.Title>{titulo}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -118,30 +158,15 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
             </Form.Select>
           </Form.Group>
 
-          {/* Tipo de servicio (solo si categoría = Servicios) */}
-          {form.categoria === 'Servicios' && (
-            <Form.Group className='mb-3'>
-              <Form.Label>Tipo de Servicio *</Form.Label>
-              <Form.Select name='subServicio' value={form.subServicio} onChange={handleChange}>
-                <option value=''>Seleccionar servicio</option>
-                {TIPOS_SERVICIO.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          )}
-
           {/* Concepto */}
           <Form.Group className='mb-3'>
             <Form.Label>Concepto *</Form.Label>
             <Form.Control
               type='text'
               name='descripcion'
+              placeholder='Ej: Arriendo, servicios, etc.'
               value={form.descripcion}
               onChange={handleChange}
-              placeholder='Descripción de la transacción'
             />
           </Form.Group>
 
@@ -160,45 +185,36 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
 
           {/* Método de pago */}
           <Form.Group className='mb-3'>
-            <Form.Label>Método de Pago *</Form.Label>
-            <div>
+            <Form.Label>Método de pago</Form.Label>
+            <Form.Select name='metodoPago' value={form.metodoPago} onChange={handleChange}>
               {METODOS_PAGO.map((m) => (
-                <Form.Check
-                  key={m}
-                  inline
-                  type='radio'
-                  label={m}
-                  name='metodoPago'
-                  value={m}
-                  checked={form.metodoPago === m}
-                  onChange={handleChange}
-                />
+                <option key={m} value={m}>
+                  {m}
+                </option>
               ))}
-            </div>
+            </Form.Select>
           </Form.Group>
 
-          {/* Número de factura */}
+          {/* Recibo / notas */}
           <Form.Group className='mb-3'>
-            <Form.Label>Número de Factura</Form.Label>
+            <Form.Label>Número de recibo (opcional)</Form.Label>
             <Form.Control
               type='text'
-              name='numeroFactura'
-              value={form.numeroFactura}
+              name='numeroRecibo'
+              placeholder='Ej: 00123'
+              value={form.numeroRecibo}
               onChange={handleChange}
-              placeholder='Opcional'
             />
           </Form.Group>
 
-          {/* Notas */}
-          <Form.Group className='mb-2'>
-            <Form.Label>Notas</Form.Label>
+          <Form.Group className='mb-3'>
+            <Form.Label>Notas (opcional)</Form.Label>
             <Form.Control
               as='textarea'
               rows={3}
               name='notas'
               value={form.notas}
               onChange={handleChange}
-              placeholder='Notas adicionales (opcional)'
             />
           </Form.Group>
         </Form>
@@ -208,8 +224,9 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
         <Button variant='secondary' onClick={handleClose} disabled={saving}>
           Cancelar
         </Button>
-        <Button onClick={handleGuardar} disabled={saving}>
-          {saving ? 'Guardando...' : 'Guardar'}
+
+        <Button variant={esEditar ? 'primary' : 'danger'} onClick={handleGuardar} disabled={saving}>
+          {saving ? 'Guardando...' : esEditar ? 'Guardar cambios' : 'Guardar'}
         </Button>
       </Modal.Footer>
     </Modal>
