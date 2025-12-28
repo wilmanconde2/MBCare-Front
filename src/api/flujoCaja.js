@@ -1,46 +1,43 @@
 import axios from './axios';
 
 /**
- * Crear transacción (Ingreso o Egreso)
- * payload mínimo: { tipo: 'Ingreso'|'Egreso', descripcion, monto, metodoPago }
- * Puedes pasar campos extra (ej: categoria, paciente, notas) y el backend los irá soportando.
+ * Crear transacción
  */
 export const crearTransaccion = async (payload) => {
-    const { data } = await axios.post('/caja/flujo/crear', payload);
-    return data; // { message, transaccion }
+    const { data } = await axios.post('/flujo-caja/crear', payload);
+    return data;
 };
 
 /**
- * Listar transacciones por ID de caja
+ * Listar transacciones por caja
  */
 export const listarTransaccionesPorCaja = async (cajaId) => {
-    const { data } = await axios.get(`/caja/flujo/transacciones/caja/${cajaId}`);
-    return data; // { transacciones }
+    const { data } = await axios.get(`/flujo-caja/transacciones/caja/${cajaId}`);
+    return data;
 };
 
 /**
- * Listar transacciones por fecha (YYYY-MM-DD)
+ * Listar transacciones por fecha
  */
 export const listarTransaccionesPorFecha = async (fecha) => {
-    const { data } = await axios.get('/caja/flujo/transacciones/fecha', {
+    const { data } = await axios.get('/flujo-caja/transacciones/fecha', {
         params: { fecha },
     });
-    return data; // { transacciones }
+    return data;
 };
 
 /**
- * Editar transacción (solo Fundador)
- * payload: { descripcion?, monto?, metodoPago? }
+ * Editar transacción
  */
 export const editarTransaccion = async (id, payload) => {
-    const { data } = await axios.put(`/caja/flujo/transaccion/${id}`, payload);
-    return data; // { message, transaccion }
+    const { data } = await axios.put(`/flujo-caja/transaccion/${id}`, payload);
+    return data;
 };
 
 /**
- * Eliminar transacción (solo Fundador)
+ * Eliminar transacción
  */
 export const eliminarTransaccion = async (id) => {
-    const { data } = await axios.delete(`/caja/flujo/transaccion/${id}`);
-    return data; // { message }
+    const { data } = await axios.delete(`/flujo-caja/transaccion/${id}`);
+    return data;
 };

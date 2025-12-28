@@ -8,7 +8,21 @@ import CajaActionModal from './CajaActionModal';
 import HistorialCaja from './HistorialCaja';
 import '../../styles/contabilidad.scss';
 
-const hoyISO = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+// ✅ HOY en America/Bogota (sin toISOString)
+const hoyISO = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+
+  const y = parts.find((p) => p.type === 'year')?.value;
+  const m = parts.find((p) => p.type === 'month')?.value;
+  const d = parts.find((p) => p.type === 'day')?.value;
+
+  return `${y}-${m}-${d}`; // YYYY-MM-DD
+};
 
 export default function Contabilidad() {
   const [fecha, setFecha] = useState(hoyISO());
@@ -56,13 +70,26 @@ export default function Contabilidad() {
     }
   };
 
+  // ✅ Helper: calcular totales del día desde transacciones (si aún no hay resumen persistido)
+  const calcularTotalesDesdeTransacciones = (arr) => {
+    const ingresosTotales = (arr || [])
+      .filter((t) => t?.tipo === 'Ingreso')
+      .reduce((acc, t) => acc + (Number(t?.monto) || 0), 0);
+
+    const egresosTotales = (arr || [])
+      .filter((t) => t?.tipo === 'Egreso')
+      .reduce((acc, t) => acc + (Number(t?.monto) || 0), 0);
+
+    return { ingresosTotales, egresosTotales };
+  };
+
   async function cargarDatos(fechaStr) {
     setLoading(true);
     try {
       // 0) Estado de la caja (para habilitar/deshabilitar acciones)
       const estado = await refreshEstadoCajaHoy();
 
-      // 1) Resumen del día
+      // 1) Resumen del día (si existe en BD)
       let resumenData = null;
       try {
         const resResumen = await obtenerResumenCaja(fechaStr);
@@ -71,21 +98,42 @@ export default function Contabilidad() {
         resumenData = null;
       }
 
-      // ✅ Si NO hay resumen pero la caja está abierta, mostramos apertura con saldoInicial
+      // 2) Transacciones del día
+      const resTrans = await listarTransaccionesPorFecha(fechaStr);
+      const trans = resTrans?.transacciones || [];
+      setTransacciones(trans);
+
+      // ✅ Totales calculados desde transacciones (si caja abierta y/o resumen no existe aún)
+      const { ingresosTotales, egresosTotales } = calcularTotalesDesdeTransacciones(trans);
+
+      // ✅ Si NO hay resumen pero la caja está abierta, mostramos apertura + totales reales del día
       if (!resumenData && estado?.abierta && estado?.caja) {
+        const saldoInicial = estado.caja.saldoInicial ?? 0;
         resumenData = {
-          saldoInicial: estado.caja.saldoInicial ?? 0,
-          ingresosTotales: 0,
-          egresosTotales: 0,
-          saldoFinal: estado.caja.saldoInicial ?? 0,
+          saldoInicial,
+          ingresosTotales,
+          egresosTotales,
+          saldoFinal: saldoInicial + ingresosTotales - egresosTotales,
+        };
+      }
+
+      // ✅ Si hay resumen pero viene incompleto o desactualizado, lo reforzamos con lo calculado (sin romper nada)
+      if (resumenData) {
+        const saldoInicial = resumenData.saldoInicial ?? estado?.caja?.saldoInicial ?? 0;
+        const ing = Number(resumenData.ingresosTotales ?? ingresosTotales) || 0;
+        const egr = Number(resumenData.egresosTotales ?? egresosTotales) || 0;
+        const saldoFinal = resumenData.saldoFinal ?? saldoInicial + ing - egr;
+
+        resumenData = {
+          ...resumenData,
+          saldoInicial,
+          ingresosTotales: ing,
+          egresosTotales: egr,
+          saldoFinal,
         };
       }
 
       setResumen(resumenData);
-
-      // 2) Transacciones del día
-      const resTrans = await listarTransaccionesPorFecha(fechaStr);
-      setTransacciones(resTrans?.transacciones || []);
     } catch (err) {
       console.error('Error cargando contabilidad:', err);
     } finally {
@@ -337,10 +385,14 @@ export default function Contabilidad() {
                   <tbody>
                     {transacciones.map((t) => {
                       const fechaT = new Date(t.createdAt);
+
                       const hora = fechaT.toLocaleTimeString('es-CO', {
                         hour: '2-digit',
                         minute: '2-digit',
                       });
+
+                      // ✅ FIX: el backend puede devolver "metodo" (formateado) o "metodoPago" (modelo)
+                      const metodo = t?.metodoPago ?? t?.metodo ?? 'N/A';
 
                       return (
                         <tr key={t._id}>
@@ -354,7 +406,7 @@ export default function Contabilidad() {
                               </>
                             )}
                           </td>
-                          <td>{t.metodoPago}</td>
+                          <td>{metodo}</td>
                           <td className={t.tipo === 'Ingreso' ? 'tipo-ingreso' : 'tipo-egreso'}>
                             {t.tipo}
                           </td>

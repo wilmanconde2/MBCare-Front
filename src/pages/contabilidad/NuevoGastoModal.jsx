@@ -86,7 +86,7 @@ const NuevoGastoModal = ({ show, onClose, onCreated }) => {
 
     try {
       setSaving(true);
-      await axios.post('/caja/flujo/crear', payload);
+      await axios.post('/flujo-caja/crear', payload);
       onCreated && onCreated();
       handleClose();
     } catch (e) {
