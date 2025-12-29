@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getPacientes, deletePaciente } from '../../api/pacientes';
 import { useNavigate } from 'react-router-dom';
 import NuevoPacienteModal from './NuevoPacienteModal';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import '../../styles/pacientes.scss';
 
 export default function Pacientes() {
@@ -41,17 +42,6 @@ export default function Pacientes() {
     }
   }, [showModal, confirmId]);
 
-  useEffect(() => {
-    if (!confirmId) return;
-
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setConfirmId(null);
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [confirmId]);
-
   async function handleDelete() {
     try {
       await deletePaciente(confirmId);
@@ -67,7 +57,6 @@ export default function Pacientes() {
 
   return (
     <div className='pacientes-page'>
-      {/* Encabezado */}
       <div className='pacientes-header'>
         <h2 className='page-title'>Pacientes</h2>
 
@@ -76,80 +65,24 @@ export default function Pacientes() {
         </button>
       </div>
 
-      {/* Modal Crear (Bootstrap) */}
       <NuevoPacienteModal
         show={showModal}
         onHide={() => setShowModal(false)}
         onSuccess={loadPacientes}
       />
 
-      {/* Modal Confirmar Eliminar */}
-      {confirmId && (
-        <div
-          className='confirm-modal'
-          role='dialog'
-          aria-modal='true'
-          aria-labelledby='confirm-title'
-        >
-          <div
-            className='cm-overlay'
-            onMouseDown={(e) => {
-              if (e.target === e.currentTarget) setConfirmId(null);
-            }}
-          >
-            <div className='cm-box cm-pop' role='document'>
-              <div className='cm-header'>
-                <div className='cm-header-left'>
-                  <span className='cm-icon' aria-hidden='true'>
-                    <i className='bi bi-exclamation-triangle-fill'></i>
-                  </span>
-                  <div>
-                    <h3 id='confirm-title' className='cm-title'>
-                      Eliminar paciente
-                    </h3>
-                    <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
-                  </div>
-                </div>
+      <ConfirmModal
+        open={!!confirmId}
+        title='Eliminar paciente'
+        subtitle='Esta acción no se puede deshacer.'
+        message='Se eliminará el paciente y sus datos asociados (si aplica). ¿Deseas continuar?'
+        confirmText='Eliminar'
+        cancelText='Cancelar'
+        confirmIconClass='bi bi-trash3'
+        onClose={() => setConfirmId(null)}
+        onConfirm={handleDelete}
+      />
 
-                <button
-                  className='cm-close'
-                  onClick={() => setConfirmId(null)}
-                  aria-label='Cerrar'
-                  type='button'
-                >
-                  <i className='bi bi-x'></i>
-                </button>
-              </div>
-
-              <div className='cm-body'>
-                <div className='cm-callout'>
-                  <div className='cm-dot' />
-                  <p>
-                    Se eliminará el paciente y sus datos asociados (si aplica). ¿Deseas continuar?
-                  </p>
-                </div>
-              </div>
-
-              <div className='cm-footer'>
-                <button
-                  className='cm-btn cm-btn-ghost'
-                  onClick={() => setConfirmId(null)}
-                  type='button'
-                >
-                  Cancelar
-                </button>
-
-                <button className='cm-btn cm-btn-danger' onClick={handleDelete} type='button'>
-                  <i className='bi bi-trash3'></i>
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TABLA estilo AGENDA */}
       <div className='pacientes-card'>
         <h3 className='card-title'>Lista de Pacientes</h3>
 
@@ -168,7 +101,6 @@ export default function Pacientes() {
             <tbody>
               {pacientes.map((p) => (
                 <tr key={p._id}>
-                  {/* ✅ En mobile: Nombre + Documento debajo (igual Agenda) */}
                   <td className='td-main'>
                     {p.nombreCompleto}
                     <br />
@@ -177,11 +109,8 @@ export default function Pacientes() {
                     </small>
                   </td>
 
-                  {/* ✅ En desktop: columna documento normal */}
                   <td className='hide-mobile doc-col'>{p.numeroDocumento}</td>
-
                   <td className='hide-mobile'>{p.telefono || '-'}</td>
-
                   <td className='hide-mobile'>{p.email || '-'}</td>
 
                   <td className='actions'>

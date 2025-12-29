@@ -1,12 +1,13 @@
 // src/pages/contabilidad/Contabilidad.jsx
 import { useEffect, useMemo, useState } from 'react';
 import { abrirCaja, cerrarCaja, obtenerResumenCaja, obtenerEstadoCajaHoy } from '../../api/caja';
-import { listarTransaccionesPorFecha } from '../../api/flujoCaja';
+import { listarTransaccionesPorFecha, eliminarTransaccion } from '../../api/flujoCaja';
 import NuevoIngresoModal from './NuevoIngresoModal';
 import NuevoGastoModal from './NuevoGastoModal';
 import CajaActionModal from './CajaActionModal';
 import HistorialCaja from './HistorialCaja';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import '../../styles/contabilidad.scss';
 
 // ✅ HOY en America/Bogota (sin toISOString)
@@ -22,12 +23,12 @@ const hoyISO = () => {
   const m = parts.find((p) => p.type === 'month')?.value;
   const d = parts.find((p) => p.type === 'day')?.value;
 
-  return `${y}-${m}-${d}`; // YYYY-MM-DD
+  return `${y}-${m}-${d}`;
 };
 
 export default function Contabilidad() {
-  const { auth } = useAuth();
-  const esFundador = auth?.user?.rol === 'Fundador';
+  const { user } = useAuth();
+  const esFundador = user?.rol === 'Fundador';
 
   const [fecha, setFecha] = useState(hoyISO());
   const [resumen, setResumen] = useState(null);
@@ -37,26 +38,23 @@ export default function Contabilidad() {
   const [showIngreso, setShowIngreso] = useState(false);
   const [showGasto, setShowGasto] = useState(false);
 
-  const [tab, setTab] = useState('hoy'); // 'hoy' | 'historial'
+  const [tab, setTab] = useState('hoy');
 
-  // ✅ Estado de caja (abierta/cerrada) para controlar UI
   const [cajaHoy, setCajaHoy] = useState({
     loading: true,
     abierta: false,
     caja: null,
   });
 
-  // Modal genérico para abrir/cerrar caja
   const [modalCaja, setModalCaja] = useState({
     show: false,
-    action: null, // 'abrir' | 'cerrar'
+    action: null,
   });
 
-  // Banner de mensajes
-  const [flash, setFlash] = useState(null); // { type: 'success' | 'error', text: string }
+  const [flash, setFlash] = useState(null);
 
-  // ✅ Confirm delete (mismo UI que Pacientes)
-  const [confirmTx, setConfirmTx] = useState(null); // { _id, descripcion, monto, tipo, metodo?, paciente? }
+  const [confirmTx, setConfirmTx] = useState(null);
+  const [editTx, setEditTx] = useState(null);
 
   const refreshEstadoCajaHoy = async () => {
     try {
@@ -77,7 +75,6 @@ export default function Contabilidad() {
     }
   };
 
-  // ✅ Helper: calcular totales del día desde transacciones (si aún no hay resumen persistido)
   const calcularTotalesDesdeTransacciones = (arr) => {
     const ingresosTotales = (arr || [])
       .filter((t) => t?.tipo === 'Ingreso')
@@ -90,29 +87,21 @@ export default function Contabilidad() {
     return { ingresosTotales, egresosTotales };
   };
 
-  // ✅ Helpers para render robusto (backend puede devolver paciente como string u objeto)
   const getMetodo = (t) => t?.metodo ?? t?.metodoPago ?? '-';
 
   const getPacienteLabel = (t) => {
     if (!t?.paciente) return '-';
     if (typeof t.paciente === 'string') return t.paciente || '-';
-    // objeto populate
     return t.paciente?.nombreCompleto ?? '-';
   };
 
-  const getDetalleExtra = (t) => {
-    // si quieres mantener el paciente debajo del detalle como antes, aquí lo controlas
-    // ahora lo mostramos en columna "Paciente", entonces devolvemos null
-    return null;
-  };
+  const getDetalleExtra = () => null;
 
   async function cargarDatos(fechaStr) {
     setLoading(true);
     try {
-      // 0) Estado de la caja
       const estado = await refreshEstadoCajaHoy();
 
-      // 1) Resumen del día (si existe en BD)
       let resumenData = null;
       try {
         const resResumen = await obtenerResumenCaja(fechaStr);
@@ -121,15 +110,12 @@ export default function Contabilidad() {
         resumenData = null;
       }
 
-      // 2) Transacciones del día
       const resTrans = await listarTransaccionesPorFecha(fechaStr);
       const trans = resTrans?.transacciones || [];
       setTransacciones(trans);
 
-      // 3) Totales calculados
       const { ingresosTotales, egresosTotales } = calcularTotalesDesdeTransacciones(trans);
 
-      // ✅ Si NO hay resumen pero la caja está abierta, mostramos apertura + totales reales del día
       if (!resumenData && estado?.abierta && estado?.caja) {
         const saldoInicial = estado.caja.saldoInicial ?? 0;
         resumenData = {
@@ -140,7 +126,6 @@ export default function Contabilidad() {
         };
       }
 
-      // ✅ Si hay resumen pero viene incompleto, lo reforzamos con lo calculado
       if (resumenData) {
         const saldoInicial = resumenData.saldoInicial ?? estado?.caja?.saldoInicial ?? 0;
         const ing = Number(resumenData.ingresosTotales ?? ingresosTotales) || 0;
@@ -169,6 +154,19 @@ export default function Contabilidad() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fecha]);
 
+  useEffect(() => {
+    const hasModalOpen = showIngreso || showGasto || modalCaja.show || !!confirmTx || !!editTx;
+
+    if (hasModalOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [showIngreso, showGasto, modalCaja.show, confirmTx, editTx]);
+
   const abrirCajaModal = () => {
     if (cajaHoy.abierta) {
       setFlash({ type: 'error', text: 'Ya hay una caja abierta para hoy.' });
@@ -185,13 +183,11 @@ export default function Contabilidad() {
     setModalCaja({ show: true, action: 'cerrar' });
   };
 
-  // Confirmar acción desde el modal (abrir/cerrar)
   const handleCajaConfirm = async (valor) => {
     try {
       if (modalCaja.action === 'abrir') {
         const resp = await abrirCaja(valor);
 
-        // Optimista
         if (resp?.caja) {
           const caja = resp.caja;
           setResumen({
@@ -230,18 +226,17 @@ export default function Contabilidad() {
   const handleTransaccionCreada = async () => {
     setShowIngreso(false);
     setShowGasto(false);
+    setEditTx(null);
     await cargarDatos(fecha);
   };
 
-  // ✅ CRUD handlers (marcados para conectar endpoints luego)
   const handleEditarTransaccion = (tx) => {
-    // TODO: abrir modal de edición (cuando lo tengas listo)
-    // TODO: conectar PUT endpoint update (cuando me pases update/delete de transacciones)
-    console.log('EDIT tx:', tx);
-    setFlash({ type: 'error', text: 'Editar: pendiente conectar endpoint update.' });
+    if (!esFundador) return;
+    setEditTx(tx);
   };
 
   const handlePedirEliminar = (tx) => {
+    if (!esFundador) return;
     setConfirmTx(tx);
   };
 
@@ -249,17 +244,18 @@ export default function Contabilidad() {
     if (!confirmTx?._id) return;
 
     try {
-      // TODO: conectar DELETE endpoint (cuando me pases update/delete de transacciones)
-      console.log('DELETE tx:', confirmTx._id);
-      setFlash({ type: 'error', text: 'Eliminar: pendiente conectar endpoint delete.' });
+      await eliminarTransaccion(confirmTx._id);
+
+      setFlash({ type: 'success', text: 'Movimiento eliminado.' });
+      setConfirmTx(null);
+
+      await cargarDatos(fecha);
     } catch (err) {
       console.error(err);
       const msg = err.response?.data?.message || 'No se pudo eliminar el movimiento.';
       setFlash({ type: 'error', text: msg });
     } finally {
       setConfirmTx(null);
-      // cuando conectes delete real, recarga:
-      // await cargarDatos(fecha);
     }
   };
 
@@ -268,9 +264,11 @@ export default function Contabilidad() {
   const egresos = resumen?.egresosTotales ?? 0;
   const saldoFinal = resumen?.saldoFinal ?? saldoInicial + ingresos - egresos;
 
-  // ✅ reglas UI
   const puedeOperarHoy = !cajaHoy.loading && cajaHoy.abierta;
   const puedeAbrirCaja = !cajaHoy.loading && !cajaHoy.abierta;
+
+  const showEditIngreso = !!editTx && editTx?.tipo === 'Ingreso';
+  const showEditGasto = !!editTx && editTx?.tipo === 'Egreso';
 
   if (loading || cajaHoy.loading) {
     return <div className='contabilidad-page'>Cargando...</div>;
@@ -281,7 +279,6 @@ export default function Contabilidad() {
       <h1 className='contab-title'>Contabilidad</h1>
       <p className='contab-subtitle'>Control diario de caja y movimientos.</p>
 
-      {/* ====== BANNER MENSAJES ====== */}
       {flash && (
         <div className={`alert-banner ${flash.type}`}>
           <span>{flash.text}</span>
@@ -291,7 +288,6 @@ export default function Contabilidad() {
         </div>
       )}
 
-      {/* ====== RESUMEN SUPERIOR ====== */}
       <div className='contab-summary'>
         <div className='summary-card apertura'>
           <div>
@@ -338,7 +334,6 @@ export default function Contabilidad() {
         </div>
       </div>
 
-      {/* ====== TABS ====== */}
       <div className='contab-tabs'>
         <button
           className={`tab-btn ${tab === 'hoy' ? 'active' : ''}`}
@@ -355,10 +350,8 @@ export default function Contabilidad() {
         </button>
       </div>
 
-      {/* ====== PANEL HOY ====== */}
       {tab === 'hoy' && (
         <div className='contab-panel'>
-          {/* Toolbar */}
           <div className='transacciones-toolbar'>
             {puedeAbrirCaja && (
               <button type='button' className='btn-open-caja' onClick={abrirCajaModal}>
@@ -385,7 +378,6 @@ export default function Contabilidad() {
             {!cajaHoy.abierta && <span className='caja-estado-label'>Caja del día cerrada</span>}
           </div>
 
-          {/* Resumen del día */}
           <div className='resumen-dia-card'>
             <div className='title'>Resumen del día</div>
 
@@ -410,7 +402,6 @@ export default function Contabilidad() {
             </div>
           </div>
 
-          {/* Tabla movimientos */}
           <div className='transacciones-card'>
             <div className='transacciones-title'>Movimientos de hoy</div>
 
@@ -425,10 +416,7 @@ export default function Contabilidad() {
                     <tr>
                       <th>Hora</th>
                       <th>Detalle</th>
-
-                      {/* ✅ en mobile NO se muestra Método */}
                       <th className='col-hide-mobile'>Método</th>
-
                       <th>Paciente</th>
                       <th>Tipo</th>
                       <th>Monto</th>
@@ -464,7 +452,6 @@ export default function Contabilidad() {
                           </td>
 
                           <td className='col-hide-mobile'>{metodo}</td>
-
                           <td>{pacienteLabel}</td>
 
                           <td className={t.tipo === 'Ingreso' ? 'tipo-ingreso' : 'tipo-egreso'}>
@@ -473,12 +460,8 @@ export default function Contabilidad() {
 
                           <td className='monto'>${Number(t.monto).toLocaleString('es-CO')}</td>
 
-                          {/* ✅ Acciones estilo Pacientes */}
                           <td className='acciones' style={{ textAlign: 'center' }}>
                             <div className='acciones-wrapper' style={{ justifyContent: 'center' }}>
-                              {/* ❌ Quitamos VER */}
-
-                              {/* Solo Fundador puede editar/eliminar */}
                               {esFundador && (
                                 <>
                                   <i
@@ -508,15 +491,15 @@ export default function Contabilidad() {
         </div>
       )}
 
-      {/* ====== PANEL HISTORIAL ====== */}
       {tab === 'historial' && <HistorialCaja />}
 
-      {/* ✅ Modales crear */}
       {showIngreso && puedeOperarHoy && (
         <NuevoIngresoModal
           show={showIngreso}
           onClose={() => setShowIngreso(false)}
           onCreated={handleTransaccionCreada}
+          mode='create'
+          transaccion={null}
         />
       )}
 
@@ -525,10 +508,31 @@ export default function Contabilidad() {
           show={showGasto}
           onClose={() => setShowGasto(false)}
           onCreated={handleTransaccionCreada}
+          mode='create'
+          transaccion={null}
         />
       )}
 
-      {/* Modal abrir/cerrar */}
+      {showEditIngreso && (
+        <NuevoIngresoModal
+          show={showEditIngreso}
+          onClose={() => setEditTx(null)}
+          onCreated={handleTransaccionCreada}
+          mode='edit'
+          transaccion={editTx}
+        />
+      )}
+
+      {showEditGasto && (
+        <NuevoGastoModal
+          show={showEditGasto}
+          onClose={() => setEditTx(null)}
+          onCreated={handleTransaccionCreada}
+          mode='edit'
+          transaccion={editTx}
+        />
+      )}
+
       <CajaActionModal
         show={modalCaja.show}
         action={modalCaja.action}
@@ -536,71 +540,22 @@ export default function Contabilidad() {
         onConfirm={handleCajaConfirm}
       />
 
-      {/* ====== Confirm eliminar (mismo UI que Pacientes) ====== */}
-      {confirmTx && (
-        <div
-          className='confirm-modal'
-          role='dialog'
-          aria-modal='true'
-          aria-labelledby='confirm-title'
-        >
-          <div
-            className='cm-overlay'
-            onMouseDown={(e) => {
-              if (e.target.classList.contains('cm-overlay')) setConfirmTx(null);
-            }}
-          />
-
-          <div className='cm-box cm-pop' role='document'>
-            <div className='cm-header'>
-              <div className='cm-header-left'>
-                <span className='cm-icon' aria-hidden='true'>
-                  <i className='bi bi-exclamation-triangle-fill'></i>
-                </span>
-                <div>
-                  <h3 id='confirm-title' className='cm-title'>
-                    Eliminar movimiento
-                  </h3>
-                  <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
-                </div>
-              </div>
-
-              <button
-                type='button'
-                className='cm-close'
-                onClick={() => setConfirmTx(null)}
-                aria-label='Cerrar'
-              >
-                <i className='bi bi-x-lg'></i>
-              </button>
-            </div>
-
-            <div className='cm-body'>
-              <div className='cm-alert'>
-                <span className='cm-dot' />
-                <div>
-                  ¿Seguro que deseas eliminar este movimiento?
-                  <div style={{ marginTop: '0.35rem', fontSize: '0.9rem', color: '#6b7280' }}>
-                    <strong style={{ color: '#111827' }}>{confirmTx?.tipo}</strong> •{' '}
-                    {confirmTx?.descripcion} • $
-                    {Number(confirmTx?.monto || 0).toLocaleString('es-CO')}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className='cm-actions'>
-              <button type='button' className='cm-btn' onClick={() => setConfirmTx(null)}>
-                Cancelar
-              </button>
-
-              <button type='button' className='cm-btn cm-danger' onClick={handleConfirmEliminar}>
-                <i className='bi bi-trash3' /> Eliminar
-              </button>
-            </div>
-          </div>
+      <ConfirmModal
+        open={!!confirmTx}
+        title='Eliminar movimiento'
+        subtitle='Esta acción no se puede deshacer.'
+        message='¿Seguro que deseas eliminar este movimiento?'
+        confirmText='Eliminar'
+        cancelText='Cancelar'
+        confirmIconClass='bi bi-trash3'
+        onClose={() => setConfirmTx(null)}
+        onConfirm={handleConfirmEliminar}
+      >
+        <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+          <strong style={{ color: '#111827' }}>{confirmTx?.tipo}</strong> • {confirmTx?.descripcion}{' '}
+          • ${Number(confirmTx?.monto || 0).toLocaleString('es-CO')}
         </div>
-      )}
+      </ConfirmModal>
     </div>
   );
 }

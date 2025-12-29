@@ -1,3 +1,4 @@
+// src/api/flujoCaja.js
 import axios from './axios';
 
 /**

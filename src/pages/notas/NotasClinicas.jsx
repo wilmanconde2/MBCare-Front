@@ -6,9 +6,9 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import NuevaNotaModal from './NuevaNotaModal';
 import NotaDetalle from './NotaDetalle';
 
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import '../../styles/notasClinicas.scss';
 
-// APIs
 import { getPacientes } from '../../api/pacientes';
 import { getNotasPorDocumento, eliminarNota, descargarNotasPDF } from '../../api/notas';
 
@@ -72,7 +72,6 @@ export default function NotasClinicas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paciente?.numeroDocumento]);
 
-  // ✅ Scroll body: sólido (igual patrón en toda la app)
   const initialBodyOverflowRef = useRef('');
 
   useEffect(() => {
@@ -83,23 +82,10 @@ export default function NotasClinicas() {
   }, []);
 
   useEffect(() => {
-    if (!confirmId) return;
-
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setConfirmId(null);
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [confirmId]);
-
-
-  useEffect(() => {
     const hasModalOpen = Boolean(confirmId) || showNuevaEditar || showDetalle;
     document.body.style.overflow = hasModalOpen ? 'hidden' : initialBodyOverflowRef.current;
 
     return () => {
-      // cleanup extra (por si React desmonta en medio)
       document.body.style.overflow = initialBodyOverflowRef.current;
     };
   }, [confirmId, showNuevaEditar, showDetalle]);
@@ -152,7 +138,6 @@ export default function NotasClinicas() {
 
   return (
     <div className='notas-page'>
-      {/* Header */}
       <div className='notas-header'>
         <h2 className='page-title'>Notas Clínicas</h2>
 
@@ -180,7 +165,6 @@ export default function NotasClinicas() {
         </div>
       </div>
 
-      {/* ✅ Card búsqueda (NO debe cortar dropdown) */}
       <div className='notas-card notas-card--search mb-3'>
         <h3 className='card-title'>Buscar notas clinicas</h3>
 
@@ -214,7 +198,6 @@ export default function NotasClinicas() {
         )}
       </div>
 
-      {/* ✅ Card tabla (sí puede cortar cosas internas, pero el scroll horizontal vive en wrapper) */}
       <div className='notas-card notas-card--table'>
         <h3 className='card-title'>Lista de Notas</h3>
 
@@ -278,71 +261,18 @@ export default function NotasClinicas() {
         )}
       </div>
 
-      {/* Modal Confirmar Eliminar */}
-      {confirmId && (
-        <div
-          className='confirm-modal'
-          role='dialog'
-          aria-modal='true'
-          aria-labelledby='confirm-title'
-        >
-          <div
-            className='cm-overlay'
-            onMouseDown={(e) => {
-              if (e.target === e.currentTarget) setConfirmId(null);
-            }}
-          >
-            <div className='cm-box cm-pop' role='document'>
-              <div className='cm-header'>
-                <div className='cm-header-left'>
-                  <span className='cm-icon' aria-hidden='true'>
-                    <i className='bi bi-exclamation-triangle-fill'></i>
-                  </span>
-                  <div>
-                    <h3 id='confirm-title' className='cm-title'>
-                      Eliminar nota
-                    </h3>
-                    <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
-                  </div>
-                </div>
+      <ConfirmModal
+        open={!!confirmId}
+        title='Eliminar nota'
+        subtitle='Esta acción no se puede deshacer.'
+        message='Se eliminará la nota clínica. ¿Deseas continuar?'
+        confirmText='Eliminar'
+        cancelText='Cancelar'
+        confirmIconClass='bi bi-trash3'
+        onClose={() => setConfirmId(null)}
+        onConfirm={handleDelete}
+      />
 
-                <button
-                  className='cm-close'
-                  onClick={() => setConfirmId(null)}
-                  aria-label='Cerrar'
-                  type='button'
-                >
-                  <i className='bi bi-x'></i>
-                </button>
-              </div>
-
-              <div className='cm-body'>
-                <div className='cm-callout'>
-                  <div className='cm-dot' />
-                  <p>Se eliminará la nota clínica. ¿Deseas continuar?</p>
-                </div>
-              </div>
-
-              <div className='cm-footer'>
-                <button
-                  className='cm-btn cm-btn-ghost'
-                  onClick={() => setConfirmId(null)}
-                  type='button'
-                >
-                  Cancelar
-                </button>
-
-                <button className='cm-btn cm-btn-danger' onClick={handleDelete} type='button'>
-                  <i className='bi bi-trash3'></i>
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal crear/editar */}
       {showNuevaEditar && (
         <NuevaNotaModal
           show={showNuevaEditar}
@@ -353,7 +283,6 @@ export default function NotasClinicas() {
         />
       )}
 
-      {/* Modal ver detalle */}
       {showDetalle && (
         <NotaDetalle
           show={showDetalle}

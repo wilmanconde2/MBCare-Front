@@ -3,6 +3,7 @@ import { Table, Button, Badge } from 'react-bootstrap';
 import { obtenerCitas, cancelarCita } from '../../api/citas';
 import NuevaCitaModal from './NuevaCitaModal';
 import EditarCita from './EditarCita';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import '../../styles/agenda.scss';
 
 const Agenda = () => {
@@ -11,7 +12,6 @@ const Agenda = () => {
   const [showEditar, setShowEditar] = useState(false);
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
 
-  // Confirm modal
   const [confirmId, setConfirmId] = useState(null);
 
   const cargarCitas = async () => {
@@ -28,7 +28,6 @@ const Agenda = () => {
     setShowEditar(true);
   };
 
-  // Bloqueo de scroll (mismo patrón que el resto de la app)
   const initialBodyOverflowRef = useRef('');
 
   useEffect(() => {
@@ -47,18 +46,6 @@ const Agenda = () => {
     };
   }, [confirmId, showNueva, showEditar]);
 
-  // ESC para cerrar confirm
-  useEffect(() => {
-    if (!confirmId) return;
-
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setConfirmId(null);
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [confirmId]);
-
   const handleCancelarConfirmado = async () => {
     try {
       await cancelarCita(confirmId);
@@ -70,7 +57,6 @@ const Agenda = () => {
     }
   };
 
-  // ✅ Fecha y hora separadas (para mobile: hora debajo)
   const formatearFechaUI = (fecha) => {
     const d = new Date(fecha);
     const dia = d.toLocaleDateString('es-CO', { dateStyle: 'short' });
@@ -97,11 +83,8 @@ const Agenda = () => {
               <tr>
                 <th className='col-fecha'>Fecha</th>
                 <th className='col-paciente'>Paciente</th>
-
-                {/* ✅ Ocultas en mobile */}
                 <th className='hide-mobile'>Profesional</th>
                 <th className='hide-mobile'>Tipo</th>
-
                 <th className='col-estado'>Estado</th>
                 <th className='th-acciones col-acciones'>Acciones</th>
               </tr>
@@ -124,7 +107,6 @@ const Agenda = () => {
                       <small className='text-muted'>{cita.paciente?.numeroDocumento}</small>
                     </td>
 
-                    {/* ✅ Ocultas en mobile */}
                     <td className='hide-mobile'>{cita.profesional?.nombre}</td>
                     <td className='hide-mobile'>{cita.tipo}</td>
 
@@ -149,7 +131,6 @@ const Agenda = () => {
                         onClick={() => abrirEditar(cita)}
                       ></i>
 
-                      {/* Mostrar cancelar SOLO si está Programada */}
                       {cita.estado === 'Programada' && (
                         <i
                           className='bi bi-x-circle text-danger ms-1'
@@ -174,75 +155,18 @@ const Agenda = () => {
         </div>
       </div>
 
-      {/* Confirm cancelar */}
-      {confirmId && (
-        <div
-          className='confirm-modal'
-          role='dialog'
-          aria-modal='true'
-          aria-labelledby='confirm-title'
-        >
-          <div
-            className='cm-overlay'
-            onMouseDown={(e) => {
-              if (e.target === e.currentTarget) setConfirmId(null);
-            }}
-          >
-            <div className='cm-box cm-pop' role='document'>
-              <div className='cm-header'>
-                <div className='cm-header-left'>
-                  <span className='cm-icon' aria-hidden='true'>
-                    <i className='bi bi-exclamation-triangle-fill'></i>
-                  </span>
-                  <div>
-                    <h3 id='confirm-title' className='cm-title'>
-                      Cancelar cita
-                    </h3>
-                    <p className='cm-subtitle'>Esta acción no se puede deshacer.</p>
-                  </div>
-                </div>
+      <ConfirmModal
+        open={!!confirmId}
+        title='Cancelar cita'
+        subtitle='Esta acción no se puede deshacer.'
+        message='Se cancelará la cita seleccionada. ¿Deseas continuar?'
+        confirmText='Cancelar'
+        cancelText='Volver'
+        confirmIconClass='bi bi-x-circle'
+        onClose={() => setConfirmId(null)}
+        onConfirm={handleCancelarConfirmado}
+      />
 
-                <button
-                  className='cm-close'
-                  onClick={() => setConfirmId(null)}
-                  aria-label='Cerrar'
-                  type='button'
-                >
-                  <i className='bi bi-x'></i>
-                </button>
-              </div>
-
-              <div className='cm-body'>
-                <div className='cm-callout'>
-                  <div className='cm-dot' />
-                  <p>Se cancelará la cita seleccionada. ¿Deseas continuar?</p>
-                </div>
-              </div>
-
-              <div className='cm-footer'>
-                <button
-                  className='cm-btn cm-btn-ghost'
-                  onClick={() => setConfirmId(null)}
-                  type='button'
-                >
-                  Volver
-                </button>
-
-                <button
-                  className='cm-btn cm-btn-danger'
-                  onClick={handleCancelarConfirmado}
-                  type='button'
-                >
-                  <i className='bi bi-x-circle'></i>
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Crear */}
       {showNueva && (
         <NuevaCitaModal
           show={showNueva}
@@ -251,7 +175,6 @@ const Agenda = () => {
         />
       )}
 
-      {/* Modal Editar */}
       {showEditar && (
         <EditarCita
           show={showEditar}
