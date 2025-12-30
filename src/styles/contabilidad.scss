@@ -1,72 +1,110 @@
-/* src/styles/contabilidad.scss */
-
-/* ============================
-   CONTABILIDAD — MOBILE FIRST
-============================ */
-
 .contabilidad-page {
+  width: 100%;
+  max-width: 100%;
   padding: 1.2rem;
+  overflow-x: hidden;
 
-  .page-title,
   .contab-title {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin-bottom: 0.2rem;
-    color: #111827;
+    margin: 0;
+    color: #0f172a;
   }
 
   .contab-subtitle {
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
     color: #6b7280;
     font-size: 0.95rem;
-    margin-bottom: 1.5rem;
   }
 
-  /* ====== CARDS RESUMEN SUPERIOR ====== */
+  .alert-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin: 0.6rem 0 1rem;
+
+    &.success {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    &.error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+    }
+  }
+
   .contab-summary {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 12px;
+    margin: 1rem 0 1.1rem;
   }
 
   .summary-card {
-    background: #ffffff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
-    padding: 1.1rem 1.2rem;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    background: #ffffff;
+    padding: 1rem 1.1rem;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    gap: 12px;
 
     .label {
+      margin: 0;
+      font-weight: 600;
+      color: #111827;
       font-size: 0.9rem;
-      color: #6b7280;
-      margin-bottom: 0.2rem;
     }
 
     .amount {
-      font-size: 1.4rem;
-      font-weight: 700;
+      margin: 0.2rem 0 0.1rem;
+      font-size: 1.45rem;
+      font-weight: 600;
       color: #111827;
-      margin-bottom: 0.1rem;
     }
 
     .hint {
-      font-size: 0.8rem;
-      color: #9ca3af;
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.85rem;
     }
 
     .icon-box {
-      font-size: 1.3rem;
-      color: #6b7280;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+
+      i {
+        font-size: 1.15rem;
+      }
     }
 
-    &.apertura .amount {
-      color: #111827;
+    &.apertura .icon-box {
+      background: #eef2ff;
+      color: #3730a3;
     }
 
     &.ingresos .amount {
+      color: #16a34a;
+    }
+
+    &.ingresos .icon-box {
+      background: #ecfdf5;
       color: #16a34a;
     }
 
@@ -74,175 +112,113 @@
       color: #dc2626;
     }
 
-    &.balance .amount {
-      color: #111827;
+    &.egresos .icon-box {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    &.balance .icon-box {
+      background: #f1f5f9;
+      color: #0f172a;
     }
   }
 
-  /* ====== TABS ====== */
   .contab-tabs {
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
     display: flex;
-    background: #f9fafb;
-    border-radius: 999px;
-    padding: 0.2rem;
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-  }
+    gap: 10px;
+    margin-top: 0.4rem;
+    margin-bottom: 0.9rem;
+    flex-wrap: wrap;
 
-  .tab-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 0.55rem 0.75rem;
-    font-size: 0.9rem;
-    border-radius: 999px;
-    color: #6b7280;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-
-    i {
-      font-size: 1rem;
-    }
-
-    &.active {
-      background: #ffffff;
+    .tab-btn {
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       color: #111827;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+
+      i {
+        font-size: 1rem;
+      }
+
+      &.active {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+      }
     }
   }
 
-  /* ====== PANEL PRINCIPAL TRANSACCIONES ====== */
   .contab-panel {
-    background: #ffffff;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
-    padding: 1.4rem 1.2rem;
-    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .transacciones-toolbar {
     display: flex;
+    gap: 10px;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 1.1rem;
     align-items: center;
-  }
+    margin-bottom: 0.8rem;
 
-  .btn-open-caja {
-    background: #0d6efd !important;
-    color: white;
-    border-radius: 999px;
-    padding: 0.55rem 1.3rem;
-    border: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn-ingreso {
-    background: #16a34a;
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.55rem 1.3rem;
-    border: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn-gasto {
-    background: #dc2626;
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.55rem 1.3rem;
-    border: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn-cerrar-caja {
-    margin-left: auto;
-    background: #f97316;
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.55rem 1.3rem;
-    border: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  /* ====== ESTADO CAJA CERRADA (NUEVO) ====== */
-  .caja-estado-label {
-    margin-left: auto;
-    padding: 0.45rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-radius: 999px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    color: #6b7280;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-
-    &::before {
-      content: '●';
-      font-size: 0.65rem;
-      color: #9ca3af;
-    }
-  }
-
-  /* ====== CARD: NO HAY CAJA ====== */
-  .no-caja-card {
-    border-radius: 14px;
-    border: 1px dashed #d1d5db;
-    background: #f9fafb;
-    padding: 2rem 1.5rem;
-    text-align: center;
-
-    .title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    .text {
-      font-size: 0.9rem;
+    .caja-estado-label {
       color: #6b7280;
-      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 0.55rem 0.9rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      i {
+        font-size: 1rem;
+      }
+    }
+
+    .btn-open-caja {
+      background: #111827;
+      color: #fff;
+    }
+
+    .btn-ingreso {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .btn-gasto {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .btn-cerrar-caja {
+      background: #f97316;
+      color: #fff;
     }
   }
 
-  /* ====== RESUMEN DEL DÍA ====== */
   .resumen-dia-card {
-    margin-top: 0.8rem;
-    margin-bottom: 1rem;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    padding: 1.1rem 1.2rem;
+    background: #ffffff;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.9rem;
 
     .title {
       font-size: 1rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
 
     .linea {
@@ -304,12 +280,14 @@
 
     i {
       cursor: pointer;
+       font-size: 1.2rem;
     }
 
-    .bi-file-earmark-pdf{
+    .bi-file-earmark-pdf {
       color: red;
     }
   }
+
 
   .tabla-transacciones {
     width: 100%;
@@ -371,10 +349,9 @@
     overflow-x: hidden;
   }
 
-  /* En mobile: ocultamos columnas y evitamos min-width gigante */
   @media (max-width: 640px) {
     .tabla-transacciones.tabla-historial {
-      min-width: 0; /* clave para quitar scroll */
+      min-width: 0;
       border-spacing: 0 10px;
 
       th,
@@ -387,7 +364,6 @@
       }
     }
 
-    /* Filtros: apilado y sin empujar a overflow */
     .historial-filtros {
       gap: 0.6rem !important;
     }
@@ -399,6 +375,79 @@
       flex-wrap: wrap;
     }
   }
+
+  /* ============================
+     ✅ NUEVO: TABLA "HOY" MOBILE FRIENDLY
+  ============================ */
+
+  .only-mobile {
+    display: none;
+  }
+
+  .tabla-transacciones.tabla-hoy {
+    .td-detalle,
+    .td-paciente {
+      white-space: normal;
+      word-break: break-word;
+      max-width: 240px;
+    }
+
+    .cell-main {
+      line-height: 1.15;
+    }
+
+    .cell-sub {
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      line-height: 1.1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .tabla-transacciones.tabla-hoy {
+      .col-hide-mobile {
+        display: none;
+      }
+    }
+
+    .only-mobile {
+      display: block;
+    }
+  }
+
+  /* ============================
+     ✅ NUEVO: MODAL DETALLE TX estilo Paciente
+  ============================ */
+
+  .tx-modal {
+    .modal-content {
+      border-radius: 16px;
+      border: none;
+      overflow: hidden;
+    }
+
+    .modal-body {
+      padding: 0;
+    }
+  }
+
+  .tx-detalle-wrapper {
+    padding: 1.6rem;
+    max-width: 900px;
+  }
+
+  .tx-multiline {
+    white-space: pre-wrap;
+    word-break: break-word;
+    align-items: flex-start;
+    padding-top: 12px !important;
+    min-height: 44px;
+  }
+
+  .tx-notas {
+    min-height: 90px;
+  }
 }
 
 /* ============================
@@ -408,17 +457,12 @@
   .contabilidad-page {
     padding: 2rem;
 
-    .page-title,
-    .contab-title {
-      font-size: 2.1rem;
-    }
-
     .contab-summary {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .contab-panel {
-      padding: 1.6rem 1.6rem;
+    .tx-detalle-wrapper {
+      padding: 1.8rem;
     }
   }
 }
@@ -433,41 +477,9 @@
     .contab-summary {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
-
-    .contab-panel {
-      padding: 1.8rem 2rem;
-    }
-  }
-}
-
-.alert-banner {
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-
-  button {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
+    .contab-title {
+     font-size: 2rem;
+   }
   }
 
-  &.success {
-    border-color: rgba(34, 197, 94, 0.4);
-    color: #166534;
-  }
-
-  &.error {
-    border-color: rgba(239, 68, 68, 0.5);
-    color: #991b1b;
-  }
 }

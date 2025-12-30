@@ -111,12 +111,9 @@
 /* ---------------- ACCIONES (igual estilo que detalle-actions) ---------------- */
 
 .actions {
-  margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-
-  /* por si tu grid pone actions dentro */
   grid-column: 1 / -1;
 }
 

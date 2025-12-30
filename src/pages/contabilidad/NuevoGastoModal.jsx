@@ -32,6 +32,7 @@ function parseDescripcion(raw) {
     .split(' | ')
     .map((p) => p.trim())
     .filter(Boolean);
+
   const base = parts.shift() || '';
 
   let numeroRecibo = '';
@@ -55,18 +56,18 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
   const esEditar = mode === 'edit' && !!transaccion?._id;
   const titulo = useMemo(() => (esEditar ? 'Editar Egreso' : 'Nuevo Gasto'), [esEditar]);
 
-  // Precargar formulario en modo edición
   useEffect(() => {
     if (!show) return;
 
     if (esEditar && transaccion) {
       const parsed = parseDescripcion(transaccion.descripcion);
+      const metodoPrecarga = transaccion.metodoPago ?? transaccion.metodo ?? 'Efectivo';
 
       setForm({
         categoria: transaccion.categoria || '',
         descripcion: parsed.descripcion || '',
         monto: String(transaccion.monto ?? '0'),
-        metodoPago: transaccion.metodoPago || 'Efectivo',
+        metodoPago: metodoPrecarga,
         numeroRecibo: parsed.numeroRecibo || '',
         notas: parsed.notas || '',
       });
@@ -100,14 +101,9 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
       return;
     }
 
-    // Compactar concepto + datos opcionales en "descripcion"
     let descripcion = form.descripcion.trim();
-    if (form.numeroRecibo) {
-      descripcion += ` | Recibo: ${form.numeroRecibo.trim()}`;
-    }
-    if (form.notas) {
-      descripcion += ` | Notas: ${form.notas.trim()}`;
-    }
+    if (form.numeroRecibo) descripcion += ` | Recibo: ${form.numeroRecibo.trim()}`;
+    if (form.notas) descripcion += ` | Notas: ${form.notas.trim()}`;
 
     const payload = {
       tipo: 'Egreso',
@@ -145,7 +141,6 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
 
       <Modal.Body>
         <Form>
-          {/* Categoría */}
           <Form.Group className='mb-3'>
             <Form.Label>Categoría *</Form.Label>
             <Form.Select name='categoria' value={form.categoria} onChange={handleChange}>
@@ -158,7 +153,6 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
             </Form.Select>
           </Form.Group>
 
-          {/* Concepto */}
           <Form.Group className='mb-3'>
             <Form.Label>Concepto *</Form.Label>
             <Form.Control
@@ -170,7 +164,6 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
             />
           </Form.Group>
 
-          {/* Monto */}
           <Form.Group className='mb-3'>
             <Form.Label>Monto *</Form.Label>
             <Form.Control
@@ -183,7 +176,6 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
             />
           </Form.Group>
 
-          {/* Método de pago */}
           <Form.Group className='mb-3'>
             <Form.Label>Método de pago</Form.Label>
             <Form.Select name='metodoPago' value={form.metodoPago} onChange={handleChange}>
@@ -195,7 +187,6 @@ const NuevoGastoModal = ({ show, onClose, onCreated, mode = 'create', transaccio
             </Form.Select>
           </Form.Group>
 
-          {/* Recibo / notas */}
           <Form.Group className='mb-3'>
             <Form.Label>Número de recibo (opcional)</Form.Label>
             <Form.Control

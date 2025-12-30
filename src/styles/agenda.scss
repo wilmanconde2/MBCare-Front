@@ -35,8 +35,8 @@
   }
 
   .agenda-title {
-    font-size: 1.2rem;
-    font-weight: 600;
+   font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 1.1rem;
     color: #252525;
   }
@@ -84,10 +84,15 @@
       align-items: center;
       gap: 0.75rem;
       white-space: nowrap;
+      padding: none;
+    }
+
+    .col-acciones{
+      padding: 2rem 1rem;
     }
     
     .acciones i {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       cursor: pointer;
       transition: 0.2s ease;
 

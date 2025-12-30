@@ -32,6 +32,7 @@ function parseDescripcion(raw) {
     .split(' | ')
     .map((p) => p.trim())
     .filter(Boolean);
+
   const base = parts.shift() || '';
 
   let numeroRecibo = '';
@@ -48,6 +49,10 @@ function parseDescripcion(raw) {
   return { descripcion: base, numeroRecibo, notas };
 }
 
+function isLikelyObjectId(v) {
+  return typeof v === 'string' && /^[a-f\d]{24}$/i.test(v);
+}
+
 const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transaccion = null }) => {
   const [form, setForm] = useState(initialForm);
   const [pacientes, setPacientes] = useState([]);
@@ -57,42 +62,61 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
 
   const titulo = useMemo(() => (esEditar ? 'Editar Ingreso' : 'Nuevo Ingreso'), [esEditar]);
 
-  // Cargar pacientes de la organización
   useEffect(() => {
     const loadPacientes = async () => {
       try {
-        const res = await getPacientes(); // axios response
+        const res = await getPacientes();
         setPacientes(res.data || []);
       } catch (e) {
         console.error('Error al cargar pacientes', e);
+        setPacientes([]);
       }
     };
 
-    if (show) {
-      loadPacientes();
-    }
+    if (show) loadPacientes();
   }, [show]);
 
-  // Precargar formulario en modo edición
+  // ✅ Precarga robusta: categoria, metodoPago/metodo, paciente id o string
   useEffect(() => {
     if (!show) return;
 
     if (esEditar && transaccion) {
       const parsed = parseDescripcion(transaccion.descripcion);
 
+      const metodoPrecarga = transaccion.metodoPago ?? transaccion.metodo ?? 'Efectivo';
+
+      // paciente puede venir como:
+      // - objeto poblado { _id }
+      // - id string ObjectId
+      // - nombre string (por mapeo UI)
+      let pacienteValue = '';
+      if (transaccion.paciente && typeof transaccion.paciente === 'object') {
+        pacienteValue = transaccion.paciente._id || '';
+      } else if (isLikelyObjectId(transaccion.paciente)) {
+        pacienteValue = transaccion.paciente;
+      } else if (typeof transaccion.paciente === 'string') {
+        // intentar match por nombre contra lista de pacientes
+        const name = transaccion.paciente.trim().toLowerCase();
+        const found = (pacientes || []).find(
+          (p) => (p?.nombreCompleto || '').trim().toLowerCase() === name,
+        );
+        pacienteValue = found?._id || '';
+      }
+
       setForm({
         categoria: transaccion.categoria || '',
-        paciente: transaccion.paciente?._id || transaccion.paciente || '',
+        paciente: pacienteValue,
         descripcion: parsed.descripcion || '',
         monto: String(transaccion.monto ?? '0'),
-        metodoPago: transaccion.metodoPago || 'Efectivo',
+        metodoPago: metodoPrecarga,
         numeroRecibo: parsed.numeroRecibo || '',
         notas: parsed.notas || '',
       });
     } else {
       setForm(initialForm);
     }
-  }, [show, esEditar, transaccion]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, esEditar, transaccion, pacientes]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,14 +143,9 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
       return;
     }
 
-    // Compactar concepto + datos opcionales en "descripcion"
     let descripcion = form.descripcion.trim();
-    if (form.numeroRecibo) {
-      descripcion += ` | Recibo: ${form.numeroRecibo.trim()}`;
-    }
-    if (form.notas) {
-      descripcion += ` | Notas: ${form.notas.trim()}`;
-    }
+    if (form.numeroRecibo) descripcion += ` | Recibo: ${form.numeroRecibo.trim()}`;
+    if (form.notas) descripcion += ` | Notas: ${form.notas.trim()}`;
 
     const payload = {
       tipo: 'Ingreso',
@@ -136,9 +155,7 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
       metodoPago: form.metodoPago,
     };
 
-    if (form.paciente) {
-      payload.paciente = form.paciente; // opcional
-    }
+    if (form.paciente) payload.paciente = form.paciente;
 
     try {
       setSaving(true);
@@ -168,7 +185,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
 
       <Modal.Body>
         <Form>
-          {/* Categoría */}
           <Form.Group className='mb-3'>
             <Form.Label>Categoría *</Form.Label>
             <Form.Select name='categoria' value={form.categoria} onChange={handleChange}>
@@ -181,7 +197,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
             </Form.Select>
           </Form.Group>
 
-          {/* Cliente (paciente opcional) */}
           <Form.Group className='mb-3'>
             <Form.Label>Cliente (opcional)</Form.Label>
             <Form.Select name='paciente' value={form.paciente} onChange={handleChange}>
@@ -194,7 +209,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
             </Form.Select>
           </Form.Group>
 
-          {/* Concepto */}
           <Form.Group className='mb-3'>
             <Form.Label>Concepto *</Form.Label>
             <Form.Control
@@ -206,7 +220,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
             />
           </Form.Group>
 
-          {/* Monto */}
           <Form.Group className='mb-3'>
             <Form.Label>Monto *</Form.Label>
             <Form.Control
@@ -219,7 +232,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
             />
           </Form.Group>
 
-          {/* Método de pago */}
           <Form.Group className='mb-3'>
             <Form.Label>Método de pago</Form.Label>
             <Form.Select name='metodoPago' value={form.metodoPago} onChange={handleChange}>
@@ -231,7 +243,6 @@ const NuevoIngresoModal = ({ show, onClose, onCreated, mode = 'create', transacc
             </Form.Select>
           </Form.Group>
 
-          {/* Recibo / notas */}
           <Form.Group className='mb-3'>
             <Form.Label>Número de recibo (opcional)</Form.Label>
             <Form.Control

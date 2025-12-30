@@ -1,5 +1,5 @@
 // src/pages/contabilidad/Contabilidad.jsx
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { abrirCaja, cerrarCaja, obtenerResumenCaja, obtenerEstadoCajaHoy } from '../../api/caja';
 import { listarTransaccionesPorFecha, eliminarTransaccion } from '../../api/flujoCaja';
 import NuevoIngresoModal from './NuevoIngresoModal';
@@ -8,6 +8,7 @@ import CajaActionModal from './CajaActionModal';
 import HistorialCaja from './HistorialCaja';
 import { useAuth } from '../../context/AuthContext';
 import ConfirmModal from '../../components/ui/ConfirmModal';
+import TransaccionDetalle from './TransaccionDetalle';
 import '../../styles/contabilidad.scss';
 
 // ✅ HOY en America/Bogota (sin toISOString)
@@ -25,6 +26,27 @@ const hoyISO = () => {
 
   return `${y}-${m}-${d}`;
 };
+
+function splitDescripcion(raw) {
+  if (!raw) return { base: '', recibo: '', notas: '' };
+
+  const parts = String(raw)
+    .split(' | ')
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const base = parts.shift() || '';
+  let recibo = '';
+  let notas = '';
+
+  for (const p of parts) {
+    const low = p.toLowerCase();
+    if (low.startsWith('recibo:')) recibo = p.slice('recibo:'.length).trim();
+    if (low.startsWith('notas:')) notas = p.slice('notas:'.length).trim();
+  }
+
+  return { base, recibo, notas };
+}
 
 export default function Contabilidad() {
   const { user } = useAuth();
@@ -55,6 +77,9 @@ export default function Contabilidad() {
 
   const [confirmTx, setConfirmTx] = useState(null);
   const [editTx, setEditTx] = useState(null);
+
+  const [showDetalleTx, setShowDetalleTx] = useState(false);
+  const [detalleTx, setDetalleTx] = useState(null);
 
   const refreshEstadoCajaHoy = async () => {
     try {
@@ -87,15 +112,13 @@ export default function Contabilidad() {
     return { ingresosTotales, egresosTotales };
   };
 
-  const getMetodo = (t) => t?.metodo ?? t?.metodoPago ?? '-';
+  const getMetodo = (t) => t?.metodoPago ?? t?.metodo ?? '-';
 
   const getPacienteLabel = (t) => {
     if (!t?.paciente) return '-';
     if (typeof t.paciente === 'string') return t.paciente || '-';
     return t.paciente?.nombreCompleto ?? '-';
   };
-
-  const getDetalleExtra = () => null;
 
   async function cargarDatos(fechaStr) {
     setLoading(true);
@@ -154,18 +177,25 @@ export default function Contabilidad() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fecha]);
 
+  // ✅ Scroll lock robusto (evita quedarse pegado en hidden)
+  const initialBodyOverflowRef = useRef('');
   useEffect(() => {
-    const hasModalOpen = showIngreso || showGasto || modalCaja.show || !!confirmTx || !!editTx;
+    initialBodyOverflowRef.current = document.body.style.overflow || '';
+    return () => {
+      document.body.style.overflow = initialBodyOverflowRef.current;
+    };
+  }, []);
 
-    if (hasModalOpen) {
-      const prevOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
+  useEffect(() => {
+    const hasModalOpen =
+      showIngreso || showGasto || modalCaja.show || !!confirmTx || !!editTx || showDetalleTx;
 
-      return () => {
-        document.body.style.overflow = prevOverflow;
-      };
-    }
-  }, [showIngreso, showGasto, modalCaja.show, confirmTx, editTx]);
+    document.body.style.overflow = hasModalOpen ? 'hidden' : initialBodyOverflowRef.current;
+
+    return () => {
+      document.body.style.overflow = initialBodyOverflowRef.current;
+    };
+  }, [showIngreso, showGasto, modalCaja.show, confirmTx, editTx, showDetalleTx]);
 
   const abrirCajaModal = () => {
     if (cajaHoy.abierta) {
@@ -235,6 +265,11 @@ export default function Contabilidad() {
     setEditTx(tx);
   };
 
+  const handleVerTransaccion = (tx) => {
+    setDetalleTx(tx);
+    setShowDetalleTx(true);
+  };
+
   const handlePedirEliminar = (tx) => {
     if (!esFundador) return;
     setConfirmTx(tx);
@@ -276,7 +311,7 @@ export default function Contabilidad() {
 
   return (
     <div className='contabilidad-page'>
-      <h1 className='contab-title'>Contabilidad</h1>
+      <h2 className='contab-title'>Contabilidad</h2>
       <p className='contab-subtitle'>Control diario de caja y movimientos.</p>
 
       {flash && (
@@ -411,7 +446,7 @@ export default function Contabilidad() {
               </p>
             ) : (
               <div className='tabla-wrapper'>
-                <table className='tabla-transacciones'>
+                <table className='tabla-transacciones tabla-hoy'>
                   <thead>
                     <tr>
                       <th>Hora</th>
@@ -427,7 +462,6 @@ export default function Contabilidad() {
                   <tbody>
                     {transacciones.map((t) => {
                       const fechaT = new Date(t.createdAt);
-
                       const hora = fechaT.toLocaleTimeString('es-CO', {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -435,24 +469,26 @@ export default function Contabilidad() {
 
                       const metodo = getMetodo(t);
                       const pacienteLabel = getPacienteLabel(t);
-                      const extra = getDetalleExtra(t);
+
+                      // ✅ En tabla: NO mostrar notas, solo base
+                      const { base } = splitDescripcion(t.descripcion);
 
                       return (
                         <tr key={t._id}>
                           <td>{hora}</td>
 
-                          <td>
-                            {t.descripcion}
-                            {extra && (
-                              <>
-                                <br />
-                                <small className='text-muted'>{extra}</small>
-                              </>
-                            )}
+                          <td className='td-detalle'>
+                            <div className='cell-main'>{base}</div>
+
+                            {/* ✅ En mobile: mostramos método debajo del detalle (como Agenda) */}
+                            <div className='cell-sub only-mobile'>{metodo}</div>
                           </td>
 
                           <td className='col-hide-mobile'>{metodo}</td>
-                          <td>{pacienteLabel}</td>
+
+                          <td className='td-paciente'>
+                            <div className='cell-main'>{pacienteLabel}</div>
+                          </td>
 
                           <td className={t.tipo === 'Ingreso' ? 'tipo-ingreso' : 'tipo-egreso'}>
                             {t.tipo}
@@ -462,16 +498,23 @@ export default function Contabilidad() {
 
                           <td className='acciones' style={{ textAlign: 'center' }}>
                             <div className='acciones-wrapper' style={{ justifyContent: 'center' }}>
+                              <i
+                                className='bi bi-eye text-primary'
+                                title='Ver'
+                                onClick={() => handleVerTransaccion(t)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
                               {esFundador && (
                                 <>
                                   <i
-                                    className='bi bi-pencil-square text-primary ms-3'
+                                    className='bi bi-pencil-square text-primary'
                                     title='Editar'
                                     onClick={() => handleEditarTransaccion(t)}
                                     style={{ cursor: 'pointer' }}
                                   />
                                   <i
-                                    className='bi bi-x-circle text-danger ms-3'
+                                    className='bi bi-x-circle text-danger'
                                     title='Eliminar'
                                     onClick={() => handlePedirEliminar(t)}
                                     style={{ cursor: 'pointer' }}
@@ -533,6 +576,12 @@ export default function Contabilidad() {
         />
       )}
 
+      <TransaccionDetalle
+        show={showDetalleTx}
+        onHide={() => setShowDetalleTx(false)}
+        transaccion={detalleTx}
+      />
+
       <CajaActionModal
         show={modalCaja.show}
         action={modalCaja.action}
@@ -552,8 +601,9 @@ export default function Contabilidad() {
         onConfirm={handleConfirmEliminar}
       >
         <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-          <strong style={{ color: '#111827' }}>{confirmTx?.tipo}</strong> • {confirmTx?.descripcion}{' '}
-          • ${Number(confirmTx?.monto || 0).toLocaleString('es-CO')}
+          <strong style={{ color: '#111827' }}>{confirmTx?.tipo}</strong> •{' '}
+          {splitDescripcion(confirmTx?.descripcion || '').base} • $
+          {Number(confirmTx?.monto || 0).toLocaleString('es-CO')}
         </div>
       </ConfirmModal>
     </div>
