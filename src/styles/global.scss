@@ -16,6 +16,12 @@ body {
   margin: 0 auto;
 }
 
+table td,
+table th {
+  word-break: normal;
+}
+
+
 @media (min-width: 768px) {
   .container {
     max-width: 640px;
@@ -27,3 +33,4 @@ body {
     max-width: 960px;
   }
 }
+
