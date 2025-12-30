@@ -1,18 +1,17 @@
+/* ============================
+   CONTABILIDAD
+============================ */
+
 .contabilidad-page {
-  width: 100%;
-  max-width: 100%;
   width: 100%;
   max-width: 100%;
   padding: 1.2rem;
   overflow-x: hidden;
-  overflow-x: hidden;
 
+  /* ===== Header ===== */
   .contab-title {
     font-size: 1.8rem;
-    font-size: 1.8rem;
     font-weight: 700;
-    margin: 0;
-    color: #0f172a;
     margin: 0;
     color: #0f172a;
   }
@@ -20,12 +19,11 @@
   .contab-subtitle {
     margin-top: 0.25rem;
     margin-bottom: 1rem;
-    margin-top: 0.25rem;
-    margin-bottom: 1rem;
     color: #6b7280;
     font-size: 0.95rem;
   }
 
+  /* ===== Alerts ===== */
   .alert-banner {
     display: flex;
     justify-content: space-between;
@@ -54,41 +52,9 @@
     }
   }
 
-  }
-
-  .alert-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    margin: 0.6rem 0 1rem;
-
-    &.success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-    }
-
-    &.error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-
-    button {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: inherit;
-    }
-  }
-
+  /* ===== Summary ===== */
   .contab-summary {
     display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 12px;
-    margin: 1rem 0 1.1rem;
     grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 12px;
     margin: 1rem 0 1.1rem;
@@ -99,17 +65,11 @@
     border: 1px solid #e5e7eb;
     background: #ffffff;
     padding: 1rem 1.1rem;
-    background: #ffffff;
-    padding: 1rem 1.1rem;
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    gap: 12px;
 
     .label {
-      margin: 0;
-      font-weight: 600;
-      color: #111827;
       margin: 0;
       font-weight: 600;
       color: #111827;
@@ -120,16 +80,10 @@
       margin: 0.2rem 0 0.1rem;
       font-size: 1.45rem;
       font-weight: 600;
-      margin: 0.2rem 0 0.1rem;
-      font-size: 1.45rem;
-      font-weight: 600;
       color: #111827;
     }
 
     .hint {
-      margin: 0;
-      color: #6b7280;
-      font-size: 0.85rem;
       margin: 0;
       color: #6b7280;
       font-size: 0.85rem;
@@ -145,54 +99,31 @@
       i {
         font-size: 1.15rem;
       }
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
+    }
 
-      i {
-        font-size: 1.15rem;
+    &.apertura .icon-box {
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    &.ingresos {
+      .amount {
+        color: #16a34a;
+      }
+      .icon-box {
+        background: #ecfdf5;
+        color: #16a34a;
       }
     }
 
-    &.apertura .icon-box {
-      background: #eef2ff;
-      color: #3730a3;
-    &.apertura .icon-box {
-      background: #eef2ff;
-      color: #3730a3;
-    }
-
-    &.ingresos .amount {
-      color: #16a34a;
-    }
-
-    &.ingresos .icon-box {
-      background: #ecfdf5;
-      color: #16a34a;
-    }
-
-    &.ingresos .icon-box {
-      background: #ecfdf5;
-      color: #16a34a;
-    }
-
-    &.egresos .amount {
-      color: #dc2626;
-    }
-
-    &.egresos .icon-box {
-      background: #fef2f2;
-      color: #dc2626;
-    }
-
-    &.balance .icon-box {
-      background: #f1f5f9;
-      color: #0f172a;
-    &.egresos .icon-box {
-      background: #fef2f2;
-      color: #dc2626;
+    &.egresos {
+      .amount {
+        color: #dc2626;
+      }
+      .icon-box {
+        background: #fef2f2;
+        color: #dc2626;
+      }
     }
 
     &.balance .icon-box {
@@ -201,28 +132,14 @@
     }
   }
 
+  /* ===== Tabs ===== */
   .contab-tabs {
     display: flex;
     gap: 10px;
     margin-top: 0.4rem;
     margin-bottom: 0.9rem;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 0.4rem;
-    margin-bottom: 0.9rem;
-    flex-wrap: wrap;
 
-    .tab-btn {
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      border-radius: 999px;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #111827;
     .tab-btn {
       border: 1px solid #e5e7eb;
       background: #fff;
@@ -238,15 +155,7 @@
       i {
         font-size: 1rem;
       }
-      i {
-        font-size: 1rem;
-      }
 
-      &.active {
-        background: #0d6efd;
-        border-color: #0d6efd;
-        color: #fff;
-      }
       &.active {
         background: #0d6efd;
         border-color: #0d6efd;
@@ -258,13 +167,11 @@
   .contab-panel {
     width: 100%;
     max-width: 100%;
-    width: 100%;
-    max-width: 100%;
   }
 
+  /* ===== Toolbar ===== */
   .transacciones-toolbar {
     display: flex;
-    gap: 10px;
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
@@ -295,47 +202,12 @@
       background: #111827;
       color: #fff;
     }
-    margin-bottom: 0.8rem;
-
-    .caja-estado-label {
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 0.55rem 0.9rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-
-      i {
-        font-size: 1rem;
-      }
-    }
-
-    .btn-open-caja {
-      background: #111827;
-      color: #fff;
-    }
 
     .btn-ingreso {
       background: #16a34a;
       color: #fff;
     }
-    .btn-ingreso {
-      background: #16a34a;
-      color: #fff;
-    }
 
-    .btn-gasto {
-      background: #dc2626;
-      color: #fff;
-    }
     .btn-gasto {
       background: #dc2626;
       color: #fff;
@@ -347,18 +219,10 @@
     }
   }
 
-    .btn-cerrar-caja {
-      background: #f97316;
-      color: #fff;
-    }
-  }
-
+  /* ===== Resumen día ===== */
   .resumen-dia-card {
     border-radius: 14px;
     border: 1px solid #e5e7eb;
-    background: #ffffff;
-    padding: 1rem 1.1rem;
-    margin-bottom: 0.9rem;
     background: #ffffff;
     padding: 1rem 1.1rem;
     margin-bottom: 0.9rem;
@@ -366,7 +230,6 @@
     .title {
       font-size: 1rem;
       font-weight: 600;
-      margin-bottom: 0.8rem;
       margin-bottom: 0.8rem;
     }
 
@@ -379,15 +242,12 @@
       &.apertura span.value {
         color: #111827;
       }
-
       &.ingresos span.value {
         color: #16a34a;
       }
-
       &.egresos span.value {
         color: #dc2626;
       }
-
       &.balance span.value {
         font-weight: 600;
       }
@@ -402,7 +262,10 @@
     }
   }
 
-  /* ====== TABLA DE TRANSACCIONES ====== */
+  /* ============================
+     TABLAS
+  ============================ */
+
   .transacciones-card {
     margin-top: 0.5rem;
     border-radius: 14px;
@@ -417,37 +280,27 @@
     margin-bottom: 0.7rem;
   }
 
+  /* Wrapper: scroll horizontal normal */
   .tabla-wrapper {
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .acciones-wrapper {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-
-    i {
-      cursor: pointer;
-       font-size: 1.2rem;
-       font-size: 1.2rem;
-    }
-
-    .bi-file-earmark-pdf {
-    .bi-file-earmark-pdf {
-      color: red;
+  /* Historial: sin scroll SOLO en mobile */
+  @media (max-width: 640px) {
+    .tabla-wrapper.no-scroll-mobile {
+      overflow-x: hidden;
     }
   }
-
-
 
   .tabla-transacciones {
     width: 100%;
-    border-collapse: separate !important;
+    border-collapse: separate; /* mantenemos estilo cards */
     border-spacing: 0 8px;
 
     thead th {
-      border-bottom: none !important;
+      border-bottom: none;
       font-size: 0.8rem;
       color: #6b7280;
       font-weight: 600;
@@ -463,7 +316,7 @@
 
     tbody td {
       background: #ffffff;
-      border: none !important;
+      border: none;
       padding: 0.7rem 0.8rem;
       font-size: 0.9rem;
       vertical-align: middle;
@@ -493,17 +346,69 @@
     }
   }
 
-  /* ============================
-     ✅ HISTORIAL: SIN SCROLL EN MOBILE
-  ============================ */
+  /* Acciones */
+  .acciones-wrapper {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
 
-  .tabla-wrapper.no-scroll-mobile {
-    overflow-x: hidden;
+    i {
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .bi-file-earmark-pdf {
+      color: red;
+    }
+  }
+
+  /* ===== Modificadores: HOY (Detalle/Paciente tipo Agenda) ===== */
+  .only-mobile {
+    display: none;
+  }
+
+  .tabla-transacciones.tabla-hoy {
+    .td-detalle {
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: break-word;
+      max-width: 200px; /* solo lo necesario */
+    }
+
+    .td-paciente {
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: break-word;
+      max-width: 260px; /* permite nombres largos */
+    }
+
+    .cell-main {
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .cell-sub {
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      line-height: 1.1;
+    }
   }
 
   @media (max-width: 640px) {
+    .tabla-transacciones.tabla-hoy {
+      .col-hide-mobile {
+        display: none;
+      }
+    }
+    .only-mobile {
+      display: block;
+    }
+  }
+
+  /* ===== Modificadores: HISTORIAL ===== */
+  @media (max-width: 640px) {
     .tabla-transacciones.tabla-historial {
-      min-width: 0;
       min-width: 0;
       border-spacing: 0 10px;
 
@@ -530,120 +435,7 @@
   }
 
   /* ============================
-     ✅ NUEVO: TABLA "HOY" MOBILE FRIENDLY
-  ============================ */
-
-  .only-mobile {
-    display: none;
-  }
-
-  .tabla-transacciones.tabla-hoy {
-    .td-detalle,
-    .td-paciente {
-      white-space: normal;
-      word-break: break-word;
-      max-width: 240px;
-    }
-
-    .cell-main {
-      line-height: 1.15;
-    }
-
-    .cell-sub {
-      margin-top: 4px;
-      font-size: 0.82rem;
-      color: #6b7280;
-      line-height: 1.1;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .tabla-transacciones.tabla-hoy {
-      .col-hide-mobile {
-        display: none;
-      }
-    }
-
-    .only-mobile {
-      display: block;
-    }
-  }
-
-  /* ============================
-     ✅ NUEVO: MODAL DETALLE TX estilo Paciente
-  ============================ */
-
-  .tx-modal {
-    .modal-content {
-      border-radius: 16px;
-      border: none;
-      overflow: hidden;
-    }
-
-    .modal-body {
-      padding: 0;
-    }
-  }
-
-  .tx-detalle-wrapper {
-    padding: 1.6rem;
-    max-width: 900px;
-  }
-
-  .tx-multiline {
-    white-space: pre-wrap;
-    word-break: break-word;
-    align-items: flex-start;
-    padding-top: 12px !important;
-    min-height: 44px;
-  }
-
-  .tx-notas {
-    min-height: 90px;
-  }
-
-  /* ============================
-     ✅ NUEVO: TABLA "HOY" MOBILE FRIENDLY
-  ============================ */
-
-  .only-mobile {
-    display: none;
-  }
-
-  .tabla-transacciones.tabla-hoy {
-    .td-detalle,
-    .td-paciente {
-      white-space: normal;
-      word-break: break-word;
-      max-width: 240px;
-    }
-
-    .cell-main {
-      line-height: 1.15;
-    }
-
-    .cell-sub {
-      margin-top: 4px;
-      font-size: 0.82rem;
-      color: #6b7280;
-      line-height: 1.1;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .tabla-transacciones.tabla-hoy {
-      .col-hide-mobile {
-        display: none;
-      }
-    }
-
-    .only-mobile {
-      display: block;
-    }
-  }
-
-  /* ============================
-     ✅ NUEVO: MODAL DETALLE TX estilo Paciente
+     MODAL DETALLE TX
   ============================ */
 
   .tx-modal {
@@ -689,8 +481,6 @@
 
     .tx-detalle-wrapper {
       padding: 1.8rem;
-    .tx-detalle-wrapper {
-      padding: 1.8rem;
     }
   }
 }
@@ -705,73 +495,9 @@
     .contab-summary {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+
     .contab-title {
-     font-size: 2rem;
-   }
-  }
-
-}
-
-/* ================================
-   TABLAS CONTABILIDAD - FIX MOBILE
-================================ */
-
-.tabla-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.tabla-transacciones {
-  min-width: 720px;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.tabla-transacciones th,
-.tabla-transacciones td {
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-/* === Detalle y Paciente === */
-.td-detalle,
-.td-paciente {
-  white-space: normal;
-  min-width: 220px;
-}
-
-.td-detalle .cell-main,
-.td-paciente .cell-main {
-  font-weight: 500;
-  line-height: 1.25;
-  word-break: normal;
-  overflow-wrap: break-word;
-}
-
-.td-detalle .cell-sub {
-  font-size: 0.8rem;
-  color: #6b7280;
-  margin-top: 2px;
-}
-
-/* === Mobile === */
-@media (max-width: 768px) {
-  .tabla-transacciones {
-    min-width: 640px;
-  }
-
-  .only-mobile {
-    display: block;
-  }
-
-  .col-hide-mobile {
-    display: none;
-  }
-}
-
-/* === Desktop === */
-@media (min-width: 769px) {
-  .only-mobile {
-    display: none;
+      font-size: 2rem;
+    }
   }
 }
