@@ -232,9 +232,8 @@ export default function HistorialCaja() {
 
             <button
               type='button'
-              className='btn-open-caja'
+              className='btn-open-caja export-pdf'
               onClick={() => exportarPDF({ type: modoFiltro === 'mes' ? 'mes' : 'anio' })}
-              style={{ background: '#111827' }}
             >
               <i className='bi bi-file-earmark-pdf' /> Exportar PDF
             </button>
@@ -249,7 +248,7 @@ export default function HistorialCaja() {
             No hay cajas cerradas para el filtro seleccionado.
           </p>
         ) : (
-          <div className='tabla-wrapper no-scroll-mobile'>
+          <div className='tabla-wrapper'>
             <table className='tabla-transacciones tabla-historial'>
               <thead>
                 <tr>
@@ -330,7 +329,13 @@ export default function HistorialCaja() {
                                 background: '#f9fafb',
                               }}
                             >
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                              <div className='info-pdf'
+                                style={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: '1rem',
+                                }}
+                              >
                                 <div>
                                   <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Fecha</div>
                                   <div style={{ fontWeight: 600, color: '#111827' }}>
@@ -370,12 +375,11 @@ export default function HistorialCaja() {
                                   </div>
                                 </div>
 
-                                <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.6rem' }}>
+                                <div style={{ display: 'flex', gap: '0.6rem' }}>
                                   <button
                                     type='button'
-                                    className='btn-open-caja'
+                                    className='btn-open-caja export-pdf'
                                     onClick={() => exportarPDF({ type: 'single', fechaISO })}
-                                    style={{ background: '#111827' }}
                                   >
                                     <i className='bi bi-file-earmark-pdf' /> Exportar PDF
                                   </button>

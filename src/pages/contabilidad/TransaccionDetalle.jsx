@@ -99,7 +99,7 @@ export default function TransaccionDetalle({ show, onHide, transaccion }) {
             <p>{profesionalLabel || '-'}</p>
           </div>
 
-          <div className='col-2'>
+          <div>
             <label>Detalle</label>
             <p className='tx-multiline'>{base || '-'}</p>
           </div>
@@ -109,7 +109,7 @@ export default function TransaccionDetalle({ show, onHide, transaccion }) {
             <p className='tx-multiline'>{recibo || '-'}</p>
           </div>
 
-          <div className='col-2'>
+          <div>
             <label>Notas</label>
             <p className='tx-multiline tx-notas'>{notas || '-'}</p>
           </div>
