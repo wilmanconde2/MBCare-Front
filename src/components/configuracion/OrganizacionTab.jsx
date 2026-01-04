@@ -60,7 +60,6 @@ export default function OrganizacionTab({ isFundador, orgData, setOrgData }) {
         <div className='config-field'>
           <label className='config-label'>Industria</label>
           <input className='config-input' value={orgData.industria} disabled readOnly />
-          <small className='config-help'>La industria es solo lectura.</small>
         </div>
 
         {isFundador && (

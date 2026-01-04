@@ -1,3 +1,5 @@
+// mbcare_frontend/src/styles/agenda.scss
+
 .agenda-page {
   padding: 1.2rem;
 
@@ -47,6 +49,25 @@
     th {
       text-align: center;
       vertical-align: middle;
+    }
+
+    /* Fecha y hora en columna */
+    tbody td.col-fecha {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
+    }
+
+    .fecha-dia {
+      font-weight: 600;
+    }
+
+    .fecha-hora {
+      font-size: 0.8rem;
+      color: #6c757d;
+      white-space: nowrap;
+      line-height: 1.1;
     }
 
     border-collapse: separate !important;

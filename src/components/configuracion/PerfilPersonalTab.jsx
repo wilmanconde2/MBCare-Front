@@ -45,13 +45,12 @@ export default function PerfilPersonalTab() {
 
   return (
     <div className='config-section'>
-      <h4 className='config-section-title'>Perfil personal</h4>
+      <h4 className='config-section-title'>Perfil Personal</h4>
 
       <form className='config-form' onSubmit={handleSubmit(onSubmit)}>
         <div className='config-field'>
           <label className='config-label'>Nombre completo</label>
           <input className='config-input' placeholder='Nombre completo' {...register('nombre')} />
-          <small className='config-help'>Solo puedes editar tu nombre completo.</small>
         </div>
 
         <div className='config-actions'>

@@ -8,7 +8,8 @@ export default function TabsConfiguracion({ activeTab, onChange }) {
         className={`config-tab ${activeTab === 'perfil' ? 'active' : ''}`}
         onClick={() => onChange('perfil')}
       >
-        Perfil personal
+        <i className='bi bi-person config-tab-icon' />
+        Perfil Personal
       </button>
 
       <button
@@ -16,6 +17,7 @@ export default function TabsConfiguracion({ activeTab, onChange }) {
         className={`config-tab ${activeTab === 'organizacion' ? 'active' : ''}`}
         onClick={() => onChange('organizacion')}
       >
+        <i className='bi bi-building config-tab-icon' />
         Organización
       </button>
 
@@ -24,6 +26,7 @@ export default function TabsConfiguracion({ activeTab, onChange }) {
         className={`config-tab ${activeTab === 'seguridad' ? 'active' : ''}`}
         onClick={() => onChange('seguridad')}
       >
+        <i className='bi bi-shield-lock config-tab-icon' />
         Seguridad
       </button>
     </div>

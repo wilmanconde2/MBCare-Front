@@ -1,3 +1,5 @@
+// mbcare_frontend/src/pages/agenda/Agenda.jsx
+
 import { useEffect, useRef, useState } from 'react';
 import { Table, Button, Badge } from 'react-bootstrap';
 import { obtenerCitas, cancelarCita } from '../../api/citas';

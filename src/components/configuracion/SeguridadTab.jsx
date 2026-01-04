@@ -90,7 +90,7 @@ export default function SeguridadTab() {
 
         <div className='config-actions'>
           <button className='config-btn primary' disabled={isSubmitting} type='submit'>
-            {isSubmitting ? 'Guardando...' : 'Actualizar contraseña'}
+            {isSubmitting ? 'Guardando...' : 'Actualizar Contraseña'}
           </button>
         </div>
       </form>

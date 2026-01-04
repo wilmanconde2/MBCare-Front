@@ -33,6 +33,7 @@
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   margin-bottom: 12px;
+  justify-content: center;
 }
 
 .config-tab {
@@ -40,13 +41,14 @@
   background: transparent;
   padding: 8px 12px;
   border-radius: 10px;
-  font-weight: 600;
   cursor: pointer;
+  color: grey;
 }
 
 .config-tab.active {
   border-color: rgba(0, 0, 0, 0.2);
   background: rgba(0, 0, 0, 0.04);
+  color:#111
 }
 
 .config-content {
@@ -60,7 +62,7 @@
 
 .config-section-title {
   margin: 0 0 10px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .config-form {
@@ -74,7 +76,8 @@
 }
 
 .config-label {
-  font-weight: 600;
+  // font-weight: 600;
+  color: #111;
 }
 
 .config-input {
@@ -109,11 +112,31 @@
 }
 
 .config-btn.primary {
-  background: #111;
+  background: #4c6ef5;
   color: #fff;
 }
 
 .config-btn.primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.config-tab-icon{
+  margin-right: 6px;
+}
+
+/* Mobile: tabs en columna alineados a la izquierda */
+@media (max-width: 768px) {
+  .config-tabs {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-bottom: none;
+    gap: 10px;
+  }
+
+  .config-tab {
+    width: auto;
+    text-align: left;
+  }
 }
