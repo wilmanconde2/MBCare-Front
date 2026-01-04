@@ -11,35 +11,42 @@ export function AuthProvider({ children }) {
   const [org, setOrg] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  async function refreshSession() {
+    const res = await verifyTokenRequest();
+    const profile = res.data.user;
+
+    setUser({
+      id: profile._id,
+      nombre: profile.nombre,
+      email: profile.email,
+      rol: profile.rol,
+      debeCambiarPassword: profile.debeCambiarPassword,
+    });
+
+    if (profile.organizacion) {
+      setOrg({
+        id: profile.organizacion._id,
+        nombre: profile.organizacion.nombre,
+        industria: profile.organizacion.industria,
+      });
+    } else {
+      setOrg(null);
+    }
+
+    return profile;
+  }
+
   /* =====================================================
      1. Mantener sesión al recargar página
   ===================================================== */
   useEffect(() => {
     async function loadUser() {
       try {
-        const res = await verifyTokenRequest();
-        const profile = res.data.user;
-
-        setUser({
-          id: profile._id,
-          nombre: profile.nombre,
-          email: profile.email,
-          rol: profile.rol,
-          debeCambiarPassword: profile.debeCambiarPassword,
-        });
-
-        if (profile.organizacion) {
-          setOrg({
-            id: profile.organizacion._id,
-            nombre: profile.organizacion.nombre,
-            industria: profile.organizacion.industria,
-          });
-        }
+        await refreshSession();
       } catch {
         setUser(null);
         setOrg(null);
       }
-
       setLoading(false);
     }
 
@@ -68,6 +75,8 @@ export function AuthProvider({ children }) {
           nombre: profile.organizacion.nombre,
           industria: profile.organizacion.industria,
         });
+      } else {
+        setOrg(null);
       }
 
       return { ok: true };
@@ -100,7 +109,19 @@ export function AuthProvider({ children }) {
   async function logout() {
     await axios.post('/auth/logout').catch(() => {});
     setUser(null);
+    setOrg(null);
     window.location.href = '/login';
+  }
+
+  /* =====================================================
+     Helpers para actualizar UI sin recargar
+  ===================================================== */
+  function updateUserNombreLocal(nombre) {
+    setUser((prev) => (prev ? { ...prev, nombre } : prev));
+  }
+
+  function updateOrgNombreLocal(nombre) {
+    setOrg((prev) => (prev ? { ...prev, nombre } : prev));
   }
 
   return (
@@ -113,6 +134,9 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        refreshSession,
+        updateUserNombreLocal,
+        updateOrgNombreLocal,
       }}
     >
       {children}

@@ -11,6 +11,10 @@ export const registerRequest = (data) => axios.post("/auth/register", data);
 // Verificar token (mantener sesión)
 export const verifyTokenRequest = () => axios.get("/auth/verify");
 
-// Cambiar contraseña (primer ingreso o normal)
-export const changePasswordRequest = (newPassword) =>
-    axios.put("/auth/change-password", { newPassword });
+// Cambiar contraseña (ahora PATCH + requiere currentPassword y newPassword)
+export const changePasswordRequest = ({ currentPassword, newPassword, confirmPassword }) =>
+    axios.patch("/auth/change-password", {
+        currentPassword,
+        newPassword,
+        ...(confirmPassword !== undefined ? { confirmPassword } : {}),
+    });

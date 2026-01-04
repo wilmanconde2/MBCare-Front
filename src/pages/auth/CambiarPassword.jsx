@@ -1,27 +1,48 @@
+// mbcare_frontend/src/pages/auth/CambiarPassword.jsx
+
 import { useState } from 'react';
 import { changePasswordRequest } from '../../api/auth.api';
 import { useAuth } from '../../context/AuthContext';
 
 export default function CambiarPassword() {
   const { logout } = useAuth();
-  const [password, setPassword] = useState('');
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (password.length < 8) {
-      alert('La contraseña debe tener al menos 8 caracteres.');
+    if (!currentPassword || !newPassword) {
+      alert('Debes ingresar tu contraseña actual y la nueva contraseña.');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      alert('La nueva contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
+    if (confirmPassword && confirmPassword !== newPassword) {
+      alert('La confirmación no coincide con la nueva contraseña.');
       return;
     }
 
     setLoading(true);
     try {
-      await changePasswordRequest(password);
+      await changePasswordRequest({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      });
+
       alert('Contraseña actualizada. Inicia sesión nuevamente.');
       logout();
     } catch (e) {
-      alert('Error al cambiar la contraseña.');
+      alert(e.response?.data?.message || 'Error al cambiar la contraseña.');
     } finally {
       setLoading(false);
     }
@@ -35,9 +56,23 @@ export default function CambiarPassword() {
 
         <input
           type='password'
+          placeholder='Contraseña actual'
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+
+        <input
+          type='password'
           placeholder='Nueva contraseña (mín. 8 caracteres)'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+
+        <input
+          type='password'
+          placeholder='Confirmar nueva contraseña'
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
         <button disabled={loading}>{loading ? 'Guardando...' : 'Actualizar contraseña'}</button>

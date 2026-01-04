@@ -18,6 +18,7 @@ import './styles/pacienteEditar.scss';
 import './styles/pacienteDetalle.scss';
 import './styles/contabilidad.scss';
 import './styles/administracion.scss';
+import './styles/configuracion.scss';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
