@@ -1,3 +1,5 @@
+// mbcare_frontend/src/pages/pacientes/PacienteDetalle.jsx
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getPacienteById } from '../../api/pacientes';
@@ -73,6 +75,51 @@ export default function PacienteDetalle() {
           <div>
             <label>Dirección</label>
             <p>{paciente.direccion || '-'}</p>
+          </div>
+
+          <div>
+            <label>Ocupación</label>
+            <p>{paciente.ocupacion || '-'}</p>
+          </div>
+
+          <div>
+            <label>Estado civil</label>
+            <p>{paciente.estadoCivil || '-'}</p>
+          </div>
+
+          <div>
+            <label>Peso (kg)</label>
+            <p>{paciente.pesoKg ?? '-'}</p>
+          </div>
+
+          <div>
+            <label>Altura (cm)</label>
+            <p>{paciente.alturaCm ?? '-'}</p>
+          </div>
+
+          <div className='full'>
+            <label>Alergias</label>
+            <p className='detalle-observaciones'>{paciente.alergias || '-'}</p>
+          </div>
+
+          <div className='full'>
+            <label>Lesiones</label>
+            <p className='detalle-observaciones'>{paciente.lesiones || '-'}</p>
+          </div>
+
+          <div className='full'>
+            <label>Operaciones</label>
+            <p className='detalle-observaciones'>{paciente.operaciones || '-'}</p>
+          </div>
+
+          <div className='full'>
+            <label>Razón de la visita</label>
+            <p className='detalle-observaciones'>{paciente.razonVisita || '-'}</p>
+          </div>
+
+          <div className='full'>
+            <label>Valoración</label>
+            <p className='detalle-observaciones'>{paciente.valoracion || '-'}</p>
           </div>
 
           <div className='full'>

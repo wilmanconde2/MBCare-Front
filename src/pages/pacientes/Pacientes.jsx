@@ -1,3 +1,5 @@
+// mbcare_frontend/src/pages/pacientes/Pacientes.jsx
+
 import { useEffect, useState } from 'react';
 import { getPacientes, deletePaciente } from '../../api/pacientes';
 import { useNavigate } from 'react-router-dom';

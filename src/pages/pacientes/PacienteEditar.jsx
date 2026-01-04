@@ -1,6 +1,39 @@
+// mbcare_frontend/src/pages/pacientes/PacienteEditar.jsx
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getPacienteById, updatePaciente } from '../../api/pacientes';
+
+const ESTADOS_CIVILES = [
+  'Soltero',
+  'Casado',
+  'Unión libre',
+  'Separado',
+  'Divorciado',
+  'Viudo',
+  'Otro',
+];
+
+function normalizePacientePayload(form) {
+  const payload = { ...form };
+
+  for (const k of ['pesoKg', 'alturaCm']) {
+    const v = payload[k];
+    if (v === '' || v === null || v === undefined) {
+      delete payload[k];
+      continue;
+    }
+    const n = Number(v);
+    if (Number.isNaN(n)) delete payload[k];
+    else payload[k] = n;
+  }
+
+  Object.keys(payload).forEach((k) => {
+    if (payload[k] === '') delete payload[k];
+  });
+
+  return payload;
+}
 
 export default function PacienteEditar() {
   const { id } = useParams();
@@ -17,12 +50,21 @@ export default function PacienteEditar() {
     telefono: '',
     email: '',
     direccion: '',
+
+    ocupacion: '',
+    estadoCivil: '',
+
+    pesoKg: '',
+    alturaCm: '',
+    alergias: '',
+    lesiones: '',
+    operaciones: '',
+    razonVisita: '',
+    valoracion: '',
+
     observaciones: '',
   });
 
-  // =====================================================
-  // CARGAR PACIENTE
-  // =====================================================
   useEffect(() => {
     async function loadPaciente() {
       try {
@@ -38,6 +80,18 @@ export default function PacienteEditar() {
           telefono: p.telefono || '',
           email: p.email || '',
           direccion: p.direccion || '',
+
+          ocupacion: p.ocupacion || '',
+          estadoCivil: p.estadoCivil || '',
+
+          pesoKg: p.pesoKg ?? '',
+          alturaCm: p.alturaCm ?? '',
+          alergias: p.alergias || '',
+          lesiones: p.lesiones || '',
+          operaciones: p.operaciones || '',
+          razonVisita: p.razonVisita || '',
+          valoracion: p.valoracion || '',
+
           observaciones: p.observaciones || '',
         });
       } catch (error) {
@@ -51,9 +105,6 @@ export default function PacienteEditar() {
     loadPaciente();
   }, [id, navigate]);
 
-  // =====================================================
-  // HANDLERS
-  // =====================================================
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
@@ -61,7 +112,8 @@ export default function PacienteEditar() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await updatePaciente(id, form);
+      const payload = normalizePacientePayload(form);
+      await updatePaciente(id, payload);
       navigate('/app/pacientes');
     } catch (error) {
       console.error('Error al actualizar:', error);
@@ -70,14 +122,9 @@ export default function PacienteEditar() {
 
   if (loading) return <div className='loading'>Cargando...</div>;
 
-  // =====================================================
-  // UI
-  // =====================================================
-
   return (
     <div className='paciente-editar-page'>
       <div className='editar-wrapper'>
-        {/* HEADER */}
         <div className='modal-header'>
           <h2>Editar Paciente</h2>
           <button className='close-x' onClick={() => navigate(-1)}>
@@ -85,7 +132,6 @@ export default function PacienteEditar() {
           </button>
         </div>
 
-        {/* FORM */}
         <form className='form-grid' onSubmit={handleSubmit}>
           <div>
             <label>Nombre Completo *</label>
@@ -153,6 +199,80 @@ export default function PacienteEditar() {
           <div>
             <label>Dirección</label>
             <input type='text' name='direccion' value={form.direccion} onChange={handleChange} />
+          </div>
+
+          <div>
+            <label>Ocupación</label>
+            <input type='text' name='ocupacion' value={form.ocupacion} onChange={handleChange} />
+          </div>
+
+          <div>
+            <label>Estado civil</label>
+            <select name='estadoCivil' value={form.estadoCivil} onChange={handleChange}>
+              <option value=''>Seleccione</option>
+              {ESTADOS_CIVILES.map((x) => (
+                <option key={x} value={x}>
+                  {x}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label>Peso (kg)</label>
+            <input
+              type='number'
+              name='pesoKg'
+              value={form.pesoKg}
+              onChange={handleChange}
+              min='0'
+              step='0.1'
+            />
+          </div>
+
+          <div>
+            <label>Altura (cm)</label>
+            <input
+              type='number'
+              name='alturaCm'
+              value={form.alturaCm}
+              onChange={handleChange}
+              min='0'
+              step='1'
+            />
+          </div>
+
+          <div className='full'>
+            <label>Alergias</label>
+            <textarea name='alergias' value={form.alergias} onChange={handleChange}></textarea>
+          </div>
+
+          <div className='full'>
+            <label>Lesiones</label>
+            <textarea name='lesiones' value={form.lesiones} onChange={handleChange}></textarea>
+          </div>
+
+          <div className='full'>
+            <label>Operaciones</label>
+            <textarea
+              name='operaciones'
+              value={form.operaciones}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          <div className='full'>
+            <label>Razón de la visita</label>
+            <textarea
+              name='razonVisita'
+              value={form.razonVisita}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          <div className='full'>
+            <label>Valoración</label>
+            <textarea name='valoracion' value={form.valoracion} onChange={handleChange}></textarea>
           </div>
 
           <div className='full'>

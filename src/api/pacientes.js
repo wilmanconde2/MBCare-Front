@@ -1,3 +1,5 @@
+// mbcare_frontend/src/api/pacientes.js
+
 import api from "./axios";
 
 // =========================
