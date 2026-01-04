@@ -35,7 +35,7 @@
   }
 
   .agenda-title {
-   font-size: 1.8rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 1.1rem;
     color: #252525;
@@ -43,6 +43,12 @@
 
   /******** TABLA ********/
   .tabla-citas {
+    td,
+    th {
+      text-align: center;
+      vertical-align: middle;
+    }
+
     border-collapse: separate !important;
     border-spacing: 0 10px;
 
@@ -79,7 +85,7 @@
 
     /* Acciones */
 
-     .acciones {
+    .acciones {
       display: flex;
       align-items: center;
       gap: 0.75rem;
@@ -87,10 +93,10 @@
       padding: none;
     }
 
-    .col-acciones{
+    .col-acciones {
       padding: 2rem 1rem;
     }
-    
+
     .acciones i {
       font-size: 1.2rem;
       cursor: pointer;

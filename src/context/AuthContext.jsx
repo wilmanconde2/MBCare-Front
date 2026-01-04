@@ -1,3 +1,5 @@
+// src/context/AuthContext.jsx
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { loginRequest, registerRequest, verifyTokenRequest } from '../api/auth.api';
 import axios from '../api/axios';
@@ -10,12 +12,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   /* =====================================================
-      1. Mantener sesión al recargar página
+     1. Mantener sesión al recargar página
   ===================================================== */
   useEffect(() => {
     async function loadUser() {
       try {
-        const res = await verifyTokenRequest(); // GET /auth/verify
+        const res = await verifyTokenRequest();
         const profile = res.data.user;
 
         setUser({
@@ -23,6 +25,7 @@ export function AuthProvider({ children }) {
           nombre: profile.nombre,
           email: profile.email,
           rol: profile.rol,
+          debeCambiarPassword: profile.debeCambiarPassword,
         });
 
         if (profile.organizacion) {
@@ -43,9 +46,8 @@ export function AuthProvider({ children }) {
     loadUser();
   }, []);
 
-
   /* =====================================================
-      2. LOGIN
+     2. LOGIN
   ===================================================== */
   async function login(data) {
     try {
@@ -57,11 +59,12 @@ export function AuthProvider({ children }) {
         nombre: profile.nombre,
         email: profile.email,
         rol: profile.rol,
+        debeCambiarPassword: profile.debeCambiarPassword,
       });
 
       if (profile.organizacion) {
         setOrg({
-          id: profile.organizacion._id || profile.organizacion,
+          id: profile.organizacion.id,
           nombre: profile.organizacion.nombre,
           industria: profile.organizacion.industria,
         });
@@ -76,9 +79,8 @@ export function AuthProvider({ children }) {
     }
   }
 
-
   /* =====================================================
-      3. REGISTER (si lo usas)
+     3. REGISTER
   ===================================================== */
   async function register(data) {
     try {
@@ -93,7 +95,7 @@ export function AuthProvider({ children }) {
   }
 
   /* =====================================================
-      4. LOGOUT
+     4. LOGOUT
   ===================================================== */
   async function logout() {
     await axios.post('/auth/logout').catch(() => {});
