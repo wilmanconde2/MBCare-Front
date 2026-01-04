@@ -17,8 +17,6 @@ export default function PacienteEditar() {
     telefono: '',
     email: '',
     direccion: '',
-    contactoEmergencia: '',
-    telefonoEmergencia: '',
     observaciones: '',
   });
 
@@ -40,8 +38,6 @@ export default function PacienteEditar() {
           telefono: p.telefono || '',
           email: p.email || '',
           direccion: p.direccion || '',
-          contactoEmergencia: p.contactoEmergencia || '',
-          telefonoEmergencia: p.telefonoEmergencia || '',
           observaciones: p.observaciones || '',
         });
       } catch (error) {
@@ -157,26 +153,6 @@ export default function PacienteEditar() {
           <div>
             <label>Dirección</label>
             <input type='text' name='direccion' value={form.direccion} onChange={handleChange} />
-          </div>
-
-          <div>
-            <label>Contacto de Emergencia</label>
-            <input
-              type='text'
-              name='contactoEmergencia'
-              value={form.contactoEmergencia}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label>Teléfono de Emergencia</label>
-            <input
-              type='text'
-              name='telefonoEmergencia'
-              value={form.telefonoEmergencia}
-              onChange={handleChange}
-            />
           </div>
 
           <div className='full'>

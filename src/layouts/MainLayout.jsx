@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+// src/layouts/MainLayout.jsx
+
+import { useState, useEffect, useMemo } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,7 +10,6 @@ export default function MainLayout() {
 
   const { user, org, loading, logout } = useAuth();
 
-  // Manejo de resize
   useEffect(() => {
     const onResize = () => {
       setIsDesktop(window.innerWidth >= 992);
@@ -18,13 +19,21 @@ export default function MainLayout() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  const rol = user?.rol;
+
+  const isFundador = useMemo(() => rol === 'Fundador', [rol]);
+  const isAsistente = useMemo(() => rol === 'Asistente', [rol]);
+  const isProfesional = useMemo(() => rol === 'Profesional', [rol]);
+
+  const canSeeContabilidad = useMemo(() => isFundador || isAsistente, [isFundador, isAsistente]);
+  const canSeeAdministracion = useMemo(() => isFundador, [isFundador]);
+
   if (loading) return null;
 
   const inicial = user?.nombre?.charAt(0)?.toUpperCase();
 
   return (
     <div className='layout-wrapper'>
-      {/* ================= TOPBAR ================= */}
       <header className='topbar'>
         {!isDesktop && (
           <button className='menu-btn' onClick={() => setOpen(true)}>
@@ -38,13 +47,9 @@ export default function MainLayout() {
 
         {isDesktop ? (
           <div className='topbar-info'>
-            {/* Nombre de la empresa */}
             <span className='empresa'>{org?.nombre}</span>
-
-            {/* Avatar */}
             <div className='user-circle'>{inicial}</div>
 
-            {/* Nombre + industria */}
             <div className='user-data'>
               <span className='user-name'>{user?.nombre}</span>
               <span className='user-org'>{org?.industria}</span>
@@ -64,7 +69,6 @@ export default function MainLayout() {
         )}
       </header>
 
-      {/* ================= SIDEBAR ================= */}
       <aside className={`sidebar ${open ? 'open' : ''} ${isDesktop ? 'desktop' : ''}`}>
         <div className='sidebar-header'>
           {!isDesktop && (
@@ -91,14 +95,19 @@ export default function MainLayout() {
             <i className='bi bi-file-text' /> Notas Clínicas
           </NavLink>
 
-          <NavLink to='/app/contabilidad'>
-            <i className='bi bi-cash-coin' /> Contabilidad
-          </NavLink>
+          {canSeeContabilidad && (
+            <NavLink to='/app/contabilidad'>
+              <i className='bi bi-cash-coin' /> Contabilidad
+            </NavLink>
+          )}
 
-          <NavLink to='/app/administracion'>
-            <i className='bi bi-person-gear' /> Administración
-          </NavLink>
+          {canSeeAdministracion && (
+            <NavLink to='/app/administracion'>
+              <i className='bi bi-people-fill' /> Administración
+            </NavLink>
+          )}
 
+          {/* Configuración queda visible para todos por ahora */}
           <NavLink to='/app/configuracion'>
             <i className='bi bi-gear' /> Configuración
           </NavLink>
@@ -107,7 +116,6 @@ export default function MainLayout() {
 
       {!isDesktop && open && <div className='sidebar-overlay' onClick={() => setOpen(false)} />}
 
-      {/* ================= CONTENIDO ================= */}
       <div className='content-wrapper'>
         <main className='main-content'>
           <Outlet />

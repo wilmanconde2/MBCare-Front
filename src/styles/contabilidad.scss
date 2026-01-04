@@ -225,7 +225,8 @@
     padding: 0.5rem;
     background-color: #0d6efd;
     border: none;
-    color: #fff  }
+    color: #fff;
+  }
 
   /* ===== Resumen día ===== */
   .resumen-dia-card {
@@ -376,6 +377,12 @@
   }
 
   .tabla-transacciones.tabla-hoy {
+    td,
+    th {
+      text-align: center;
+      vertical-align: middle;
+    }
+
     .td-detalle {
       white-space: normal;
       word-break: normal;

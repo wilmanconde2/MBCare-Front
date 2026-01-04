@@ -15,8 +15,6 @@ export default function NuevoPacienteModal({ show, onHide, onSuccess }) {
     telefono: '',
     email: '',
     direccion: '',
-    contactoEmergencia: '',
-    telefonoEmergencia: '',
     observaciones: '',
   });
 
@@ -31,8 +29,6 @@ export default function NuevoPacienteModal({ show, onHide, onSuccess }) {
         telefono: '',
         email: '',
         direccion: '',
-        contactoEmergencia: '',
-        telefonoEmergencia: '',
         observaciones: '',
       });
       setLoading(false);
@@ -166,30 +162,6 @@ export default function NuevoPacienteModal({ show, onHide, onSuccess }) {
                   type='text'
                   name='direccion'
                   value={form.direccion}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={6}>
-              <Form.Group>
-                <Form.Label>Contacto Emergencia</Form.Label>
-                <Form.Control
-                  type='text'
-                  name='contactoEmergencia'
-                  value={form.contactoEmergencia}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={6}>
-              <Form.Group>
-                <Form.Label>Teléfono Emergencia</Form.Label>
-                <Form.Control
-                  type='text'
-                  name='telefonoEmergencia'
-                  value={form.telefonoEmergencia}
                   onChange={handleChange}
                 />
               </Form.Group>

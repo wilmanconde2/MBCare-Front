@@ -1,0 +1,201 @@
+// src/styles/administracion.scss
+
+.admin-page {
+  /* Toolbar */
+  .admin-toolbar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  /* Filtro */
+  .admin-filter {
+    width: 220px;
+    max-width: 100%;
+  }
+
+  .admin-select {
+    width: auto;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6eaf0;
+    background: #fff;
+    outline: none;
+    font-size: 0.9rem;
+  }
+
+  /* Badge Estado */
+  .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    width: fit-content;
+
+    &.is-active {
+      background: #0b63f6;
+      color: #fff;
+    }
+
+    &.is-inactive {
+      background: #ef4444;
+      color: #fff;
+    }
+  }
+
+  /* Select Rol */
+  .admin-role-select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6eaf0;
+    background: #fff;
+    outline: none;
+    font-size: 0.9rem;
+  }
+
+  .admin-role-mobile {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 0.85rem;
+  }
+
+  /* Icono de acción */
+  .admin-action-icon {
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 500px;
+    td,
+    th {
+      text-align: center;
+      vertical-align: middle;
+    }
+  }
+  /* =========================================================== */
+
+  /* Modal */
+  .admin-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 24, 40, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 12px;
+  }
+
+  .admin-modal {
+    width: 520px;
+    max-width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .admin-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .admin-modal-body {
+    margin-top: 12px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .admin-label {
+    display: grid;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .admin-input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6eaf0;
+    outline: none;
+    font-size: 0.95rem;
+  }
+
+  .admin-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .admin-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    background: #0d6efd;
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.92;
+    }
+  }
+
+  .admin-btn-ghost {
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .admin-muted {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .admin-icon-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 10px;
+
+    &:hover {
+      background: #f2f5fa;
+    }
+  }
+
+  /* Responsive */
+  @media (min-width: 768px) {
+    .admin-filter {
+      width: 240px;
+    }
+
+    /* En desktop no hace daño el min-width, pero si quieres puedes dejarlo igual */
+    .admin-table {
+      min-width: 0;
+    }
+  }
+}

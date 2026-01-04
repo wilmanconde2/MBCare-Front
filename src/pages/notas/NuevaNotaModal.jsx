@@ -139,7 +139,7 @@ export default function NuevaNotaModal({ show, onHide, paciente, nota, onSuccess
 
             <div className='locked-field'>
               <div className='locked-main'>{pacienteNombre}</div>
-              {pacienteDoc ? <div className='locked-sub'>Documento: {pacienteDoc}</div> : null}
+              {pacienteDoc ? <div className='locked-sub'>ID: {pacienteDoc}</div> : null}
             </div>
           </Form.Group>
 

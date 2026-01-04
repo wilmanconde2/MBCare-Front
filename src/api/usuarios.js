@@ -1,15 +1,20 @@
-import axios from "./axios";
+// src/api/usuarios.js
 
-// GET → Traer usuarios por rol (Profesional, Asistente, etc.)
-export const obtenerUsuarios = async (rol = "") => {
-    const { data } = await axios.get("/usuarios", {
-        params: { rol }
-    });
-    return data.usuarios || [];
+import axios from './axios';
+
+export const listarUsuarios = async () => {
+    const { data } = await axios.get('/usuarios');
+    return data.usuarios;
 };
 
-// GET → Un usuario por ID
-export const obtenerUsuarioPorId = async (id) => {
-    const { data } = await axios.get(`/usuarios/${id}`);
-    return data.usuario;
+export const crearUsuario = async ({ nombre, email, password, rol }) => {
+    return axios.post('/usuarios/crear', { nombre, email, password, rol });
+};
+
+export const toggleUsuarioActivo = async (id) => {
+    return axios.put(`/usuarios/activar-desactivar/${id}`);
+};
+
+export const cambiarRolUsuario = async (id, rol) => {
+    return axios.patch(`/usuarios/${id}/rol`, { rol });
 };

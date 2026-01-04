@@ -1,6 +1,4 @@
-/* ===========================
-   PACIENTES
-=========================== */
+// pacientes.scss
 
 .pacientes-page {
   width: 100%;
@@ -69,6 +67,12 @@
 }
 
 .pacientes-table {
+  td,
+  th {
+    text-align: center;
+    vertical-align: middle;
+  }
+
   width: 100%;
   border-collapse: separate !important;
   border-spacing: 0 10px;

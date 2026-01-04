@@ -75,16 +75,6 @@ export default function PacienteDetalle() {
             <p>{paciente.direccion || '-'}</p>
           </div>
 
-          <div>
-            <label>Contacto Emergencia</label>
-            <p>{paciente.contactoEmergencia || '-'}</p>
-          </div>
-
-          <div>
-            <label>Teléfono Emergencia</label>
-            <p>{paciente.telefonoEmergencia || '-'}</p>
-          </div>
-
           <div className='full'>
             <label>Observaciones</label>
             <p className='detalle-observaciones'>{paciente.observaciones || '-'}</p>
