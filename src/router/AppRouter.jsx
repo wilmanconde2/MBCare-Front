@@ -14,6 +14,7 @@ import Agenda from '../pages/agenda/Agenda';
 import Contabilidad from '../pages/contabilidad/Contabilidad';
 import NotasClinicas from '../pages/notas/NotasClinicas';
 import Administracion from '../pages/administracion/Administracion';
+import Configuracion from '../pages/configuracion/Configuracion';
 
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';
@@ -42,6 +43,7 @@ export default function AppRouter() {
           <Route path='contabilidad' element={<Contabilidad />} />
           <Route path='notas' element={<NotasClinicas />} />
           <Route path='administracion' element={<Administracion />} />
+          <Route path='configuracion' element={<Configuracion />} />
 
           <Route path='cambiar-password' element={<CambiarPassword />} />
         </Route>
