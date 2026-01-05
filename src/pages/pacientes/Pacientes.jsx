@@ -5,6 +5,9 @@ import { getPacientes, deletePaciente } from '../../api/pacientes';
 import { useNavigate } from 'react-router-dom';
 import NuevoPacienteModal from './NuevoPacienteModal';
 import ConfirmModal from '../../components/ui/ConfirmModal';
+import { Typeahead } from 'react-bootstrap-typeahead';
+
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import '../../styles/pacientes.scss';
 
 export default function Pacientes() {
@@ -12,6 +15,9 @@ export default function Pacientes() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [confirmId, setConfirmId] = useState(null);
+
+  const [selectedPaciente, setSelectedPaciente] = useState([]);
+  const pacienteSeleccionado = selectedPaciente?.[0] || null;
 
   const navigate = useNavigate();
 
@@ -57,6 +63,15 @@ export default function Pacientes() {
 
   if (loading) return <div>Cargando...</div>;
 
+  const pacienteLabelKey = (p) => `${p?.numeroDocumento || ''} — ${p?.nombreCompleto || ''}`;
+
+  const pacientesOptions = pacientes || [];
+
+  const pacientesFiltrados = pacienteSeleccionado
+    ? pacientes.filter((p) => p._id === pacienteSeleccionado._id)
+    : pacientes;
+
+
   return (
     <div className='pacientes-page'>
       <div className='pacientes-header'>
@@ -85,6 +100,23 @@ export default function Pacientes() {
         onConfirm={handleDelete}
       />
 
+      <div className='pacientes-search mb-3'>
+        <Typeahead
+          id='pacientes-typeahead'
+          labelKey={pacienteLabelKey}
+          options={pacientesOptions}
+          selected={selectedPaciente}
+          onChange={(sel) => setSelectedPaciente(sel)}
+          placeholder='Buscar por nombre o documento...'
+          minLength={1}
+          clearButton
+          paginate
+          highlightOnlyResult
+          filterBy={['numeroDocumento', 'nombreCompleto']}
+          inputProps={{ className: 'pacientes-typeahead-input' }}
+        />
+      </div>
+
       <div className='pacientes-card'>
         <h3 className='card-title'>Lista de Pacientes</h3>
 
@@ -101,7 +133,7 @@ export default function Pacientes() {
             </thead>
 
             <tbody>
-              {pacientes.map((p) => (
+              {pacientesFiltrados.map((p) => (
                 <tr key={p._id}>
                   <td className='td-main'>
                     {p.nombreCompleto}

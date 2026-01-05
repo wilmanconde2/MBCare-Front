@@ -13,6 +13,16 @@
   }
 }
 
+.pacientes-search {
+  max-width: 420px;
+
+  .pacientes-typeahead-input {
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+  }
+}
+
+
 .pacientes-header {
   display: flex;
   justify-content: space-between;
