@@ -1,8 +1,6 @@
 // src/context/AuthContext.jsx
-
 import { createContext, useContext, useEffect, useState } from 'react';
-import { loginRequest, registerRequest, verifyTokenRequest } from '../api/auth.api';
-import axios from '../api/axios';
+import { loginRequest, registerRequest, verifyTokenRequest, logoutRequest } from '../api/auth.api';
 
 const AuthContext = createContext();
 
@@ -11,28 +9,37 @@ export function AuthProvider({ children }) {
   const [org, setOrg] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function refreshSession() {
-    const res = await verifyTokenRequest();
-    const profile = res.data.user;
+  function setUserFromProfile(profile) {
+    if (!profile) {
+      setUser(null);
+      setOrg(null);
+      return;
+    }
 
     setUser({
-      id: profile._id,
+      id: profile.id || profile._id, // login usa id, verify usa _id
       nombre: profile.nombre,
       email: profile.email,
       rol: profile.rol,
       debeCambiarPassword: profile.debeCambiarPassword,
     });
 
-    if (profile.organizacion) {
+    const o = profile.organizacion;
+    if (o) {
       setOrg({
-        id: profile.organizacion._id,
-        nombre: profile.organizacion.nombre,
-        industria: profile.organizacion.industria,
+        id: o.id || o._id,
+        nombre: o.nombre,
+        industria: o.industria,
       });
     } else {
       setOrg(null);
     }
+  }
 
+  async function refreshSession() {
+    const res = await verifyTokenRequest();
+    const profile = res.data?.user;
+    setUserFromProfile(profile);
     return profile;
   }
 
@@ -46,11 +53,13 @@ export function AuthProvider({ children }) {
       } catch {
         setUser(null);
         setOrg(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     loadUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* =====================================================
@@ -59,26 +68,9 @@ export function AuthProvider({ children }) {
   async function login(data) {
     try {
       const res = await loginRequest(data);
-      const profile = res.data.user;
+      const profile = res.data?.user;
 
-      setUser({
-        id: profile.id,
-        nombre: profile.nombre,
-        email: profile.email,
-        rol: profile.rol,
-        debeCambiarPassword: profile.debeCambiarPassword,
-      });
-
-      if (profile.organizacion) {
-        setOrg({
-          id: profile.organizacion.id,
-          nombre: profile.organizacion.nombre,
-          industria: profile.organizacion.industria,
-        });
-      } else {
-        setOrg(null);
-      }
-
+      setUserFromProfile(profile);
       return { ok: true };
     } catch (error) {
       return {
@@ -98,7 +90,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return {
         ok: false,
-        message: error.response?.data?.message,
+        message: error.response?.data?.message || 'Error de registro',
       };
     }
   }
@@ -107,7 +99,7 @@ export function AuthProvider({ children }) {
      4. LOGOUT
   ===================================================== */
   async function logout() {
-    await axios.post('/auth/logout').catch(() => {});
+    await logoutRequest().catch(() => {});
     setUser(null);
     setOrg(null);
     window.location.href = '/login';

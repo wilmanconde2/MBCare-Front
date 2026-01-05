@@ -1,5 +1,4 @@
 // src/api/auth.api.js
-
 import axios from "./axios";
 
 // Login
@@ -11,8 +10,15 @@ export const registerRequest = (data) => axios.post("/auth/register", data);
 // Verificar token (mantener sesión)
 export const verifyTokenRequest = () => axios.get("/auth/verify");
 
-// Cambiar contraseña (ahora PATCH + requiere currentPassword y newPassword)
-export const changePasswordRequest = ({ currentPassword, newPassword, confirmPassword }) =>
+// Logout (limpiar cookie en backend)
+export const logoutRequest = () => axios.post("/auth/logout");
+
+// Cambiar contraseña (PATCH + requiere currentPassword y newPassword)
+export const changePasswordRequest = ({
+    currentPassword,
+    newPassword,
+    confirmPassword,
+}) =>
     axios.patch("/auth/change-password", {
         currentPassword,
         newPassword,
